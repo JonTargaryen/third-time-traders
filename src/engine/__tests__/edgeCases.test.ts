@@ -161,8 +161,8 @@ describe('Edge Case 3: Travel to undiscovered region', () => {
   it('should prevent travel to undiscovered region', () => {
     const regions = createInitialRegions();
     const caravan = createInitialCaravan();
-    // amber-wastes is undiscovered but adjacent to obsidian-citadel
-    const result = canTravel(regions, 'obsidian-citadel', 'amber-wastes', 100, caravan);
+    // jaisalmer is undiscovered but adjacent to hyderabad
+    const result = canTravel(regions, 'hyderabad', 'jaisalmer', 100, caravan);
     expect(result.canTravel).toBe(false);
     expect(result.reason).toContain('not yet discovered');
   });
@@ -170,8 +170,8 @@ describe('Edge Case 3: Travel to undiscovered region', () => {
   it('should allow travel to discovered adjacent region', () => {
     const regions = createInitialRegions();
     const caravan = createInitialCaravan();
-    // forge-highlands is discovered and adjacent to obsidian-citadel
-    const result = canTravel(regions, 'obsidian-citadel', 'forge-highlands', 100, caravan);
+    // delhi is discovered and adjacent to hyderabad
+    const result = canTravel(regions, 'hyderabad', 'delhi', 100, caravan);
     expect(result.canTravel).toBe(true);
     expect(result.cost).toBeDefined();
   });
@@ -179,8 +179,8 @@ describe('Edge Case 3: Travel to undiscovered region', () => {
   it('should prevent travel to non-adjacent region even if discovered', () => {
     const regions = createInitialRegions();
     const caravan = createInitialCaravan();
-    // shattered-coast is discovered but NOT adjacent to obsidian-citadel
-    const result = canTravel(regions, 'obsidian-citadel', 'shattered-coast', 100, caravan);
+    // kolkata is discovered but NOT adjacent to hyderabad
+    const result = canTravel(regions, 'hyderabad', 'kolkata', 100, caravan);
     expect(result.canTravel).toBe(false);
     expect(result.reason).toContain('not adjacent');
   });
@@ -188,7 +188,7 @@ describe('Edge Case 3: Travel to undiscovered region', () => {
   it('should prevent travel with insufficient fuel', () => {
     const regions = createInitialRegions();
     const caravan = createInitialCaravan();
-    const result = canTravel(regions, 'obsidian-citadel', 'forge-highlands', 0, caravan);
+    const result = canTravel(regions, 'hyderabad', 'delhi', 0, caravan);
     expect(result.canTravel).toBe(false);
     expect(result.reason).toContain('fuel');
   });
@@ -196,16 +196,16 @@ describe('Edge Case 3: Travel to undiscovered region', () => {
   it('should allow travel when fuel is exactly sufficient', () => {
     const regions = createInitialRegions();
     const caravan = createInitialCaravan();
-    const cost = calculateTravelCost(regions, 'obsidian-citadel', 'forge-highlands', caravan);
+    const cost = calculateTravelCost(regions, 'hyderabad', 'delhi', caravan);
     expect(cost).not.toBeNull();
-    const result = canTravel(regions, 'obsidian-citadel', 'forge-highlands', cost!.fuel, caravan);
+    const result = canTravel(regions, 'hyderabad', 'delhi', cost!.fuel, caravan);
     expect(result.canTravel).toBe(true);
   });
 
   it('should return null cost for travel to undiscovered region', () => {
     const regions = createInitialRegions();
     const caravan = createInitialCaravan();
-    const cost = calculateTravelCost(regions, 'obsidian-citadel', 'amber-wastes', caravan);
+    const cost = calculateTravelCost(regions, 'hyderabad', 'jaisalmer', caravan);
     expect(cost).toBeNull();
   });
 });
@@ -216,7 +216,7 @@ describe('Edge Case 3: Travel to undiscovered region', () => {
 describe('Edge Case 4: Scouting with unavailable scouts', () => {
   it('should fail when there are no scouts at all', () => {
     const regions = createInitialRegions();
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'amber-wastes', [], 500);
+    const result = canStartScoutingMission(regions, 'hyderabad', 'jaisalmer', [], 500);
     expect(result.canStart).toBe(false);
     expect(result.reason).toContain('No scouts');
   });
@@ -225,16 +225,16 @@ describe('Edge Case 4: Scouting with unavailable scouts', () => {
     const scout = createPersonnel('scout', 'TestScout', 5);
     const injured = injurePersonnel(scout);
     const regions = createInitialRegions();
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'amber-wastes', [injured], 500);
+    const result = canStartScoutingMission(regions, 'hyderabad', 'jaisalmer', [injured], 500);
     expect(result.canStart).toBe(false);
     expect(result.reason).toContain('No scouts');
   });
 
   it('should fail when all scouts are already scouting', () => {
     const scout = createPersonnel('scout', 'TestScout', 5);
-    const scouting: Personnel = { ...scout, status: 'scouting', scoutingRegion: 'emerald-canopy' };
+    const scouting: Personnel = { ...scout, status: 'scouting', scoutingRegion: 'varanasi' };
     const regions = createInitialRegions();
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'amber-wastes', [scouting], 500);
+    const result = canStartScoutingMission(regions, 'hyderabad', 'jaisalmer', [scouting], 500);
     expect(result.canStart).toBe(false);
     expect(result.reason).toContain('No scouts');
   });
@@ -243,7 +243,7 @@ describe('Edge Case 4: Scouting with unavailable scouts', () => {
     const scout = createPersonnel('scout', 'TestScout', 5);
     const dead = killPersonnel(scout);
     const regions = createInitialRegions();
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'amber-wastes', [dead], 500);
+    const result = canStartScoutingMission(regions, 'hyderabad', 'jaisalmer', [dead], 500);
     expect(result.canStart).toBe(false);
   });
 
@@ -251,7 +251,7 @@ describe('Edge Case 4: Scouting with unavailable scouts', () => {
     const guard = createPersonnel('guard', 'GuardGuy', 5);
     const negotiator = createPersonnel('negotiator', 'NegGal', 5);
     const regions = createInitialRegions();
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'amber-wastes', [guard, negotiator], 500);
+    const result = canStartScoutingMission(regions, 'hyderabad', 'jaisalmer', [guard, negotiator], 500);
     expect(result.canStart).toBe(false);
   });
 
@@ -260,15 +260,15 @@ describe('Edge Case 4: Scouting with unavailable scouts', () => {
     const scout = createPersonnel('scout', 'ScoutGal', 5);
     const injuredScout = injurePersonnel(createPersonnel('scout', 'InjuredScout', 5));
     const regions = createInitialRegions();
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'amber-wastes', [guard, scout, injuredScout], 500);
+    const result = canStartScoutingMission(regions, 'hyderabad', 'jaisalmer', [guard, scout, injuredScout], 500);
     expect(result.canStart).toBe(true);
   });
 
   it('should fail when scouting non-adjacent region', () => {
     const scout = createPersonnel('scout', 'TestScout', 5);
     const regions = createInitialRegions();
-    // the-undercity is NOT adjacent to obsidian-citadel
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'the-undercity', [scout], 500);
+    // bombay is NOT adjacent to hyderabad
+    const result = canStartScoutingMission(regions, 'hyderabad', 'bombay', [scout], 500);
     expect(result.canStart).toBe(false);
     expect(result.reason).toContain('not adjacent');
   });
@@ -276,7 +276,7 @@ describe('Edge Case 4: Scouting with unavailable scouts', () => {
   it('should fail scouting already discovered region', () => {
     const scout = createPersonnel('scout', 'TestScout', 5);
     const regions = createInitialRegions();
-    const result = canStartScoutingMission(regions, 'obsidian-citadel', 'forge-highlands', [scout], 500);
+    const result = canStartScoutingMission(regions, 'hyderabad', 'delhi', [scout], 500);
     expect(result.canStart).toBe(false);
     expect(result.reason).toContain('already discovered');
   });
@@ -288,17 +288,17 @@ describe('Edge Case 4: Scouting with unavailable scouts', () => {
 describe('Edge Case 5: Double-discovery idempotency', () => {
   it('should not change state when discovering already-discovered region', () => {
     const regions = createInitialRegions();
-    const first = discoverRegion(regions, 'amber-wastes');
-    expect(first['amber-wastes'].discovered).toBe(true);
-    const second = discoverRegion(first, 'amber-wastes');
+    const first = discoverRegion(regions, 'jaisalmer');
+    expect(first['jaisalmer'].discovered).toBe(true);
+    const second = discoverRegion(first, 'jaisalmer');
     // Same reference returned = no mutation
     expect(second).toBe(first);
-    expect(second['amber-wastes'].discovered).toBe(true);
+    expect(second['jaisalmer'].discovered).toBe(true);
   });
 
   it('should handle discovering all regions sequentially', () => {
     let regions = createInitialRegions();
-    const undiscovered: RegionId[] = ['amber-wastes', 'emerald-canopy', 'the-undercity'];
+    const undiscovered: RegionId[] = ['jaisalmer', 'varanasi', 'bombay'];
     for (const id of undiscovered) {
       regions = discoverRegion(regions, id);
       expect(regions[id].discovered).toBe(true);
@@ -309,9 +309,9 @@ describe('Edge Case 5: Double-discovery idempotency', () => {
 
   it('should not break pathfinding after double-discovery', () => {
     let regions = createInitialRegions();
-    regions = discoverRegion(regions, 'amber-wastes');
-    regions = discoverRegion(regions, 'amber-wastes'); // double
-    const path = findPath(regions, 'obsidian-citadel', 'amber-wastes');
+    regions = discoverRegion(regions, 'jaisalmer');
+    regions = discoverRegion(regions, 'jaisalmer'); // double
+    const path = findPath(regions, 'hyderabad', 'jaisalmer');
     expect(path).not.toBeNull();
     expect(path!.length).toBeGreaterThan(0);
   });
@@ -417,20 +417,20 @@ describe('Edge Case 8: Marketplace location checks', () => {
     const regions = createInitialRegions();
     // canBuyMap doesn't check location (it's a map purchase), but the store does
     // This tests the engine-level map check
-    const result = canBuyMap(regions, 'amber-wastes', { gold: 500, information: 50 });
+    const result = canBuyMap(regions, 'jaisalmer', { gold: 500, information: 50 });
     expect(result.canBuy).toBe(true);
   });
 
   it('should reject buying map for already discovered region', () => {
     const regions = createInitialRegions();
-    const result = canBuyMap(regions, 'forge-highlands', { gold: 999, information: 999 });
+    const result = canBuyMap(regions, 'delhi', { gold: 999, information: 999 });
     expect(result.canBuy).toBe(false);
     expect(result.reason).toContain('already discovered');
   });
 
   it('should reject buying map with insufficient gold', () => {
     const regions = createInitialRegions();
-    const result = canBuyMap(regions, 'amber-wastes', { gold: 0, information: 0 });
+    const result = canBuyMap(regions, 'jaisalmer', { gold: 0, information: 0 });
     expect(result.canBuy).toBe(false);
     expect(result.reason).toContain('gold');
   });
@@ -493,10 +493,10 @@ describe('Edge Case 9: Personnel hiring with insufficient resources', () => {
 // ============================================================
 describe('Edge Case 10: Trade route with undiscovered region', () => {
   it('should report undiscovered region as a reason for failure', () => {
-    const route = INITIAL_TRADE_ROUTES.find((r) => r.id === 'route-forge-coast')!;
+    const route = INITIAL_TRADE_ROUTES.find((r) => r.id === 'route-delhi-kolkata')!;
     const resources = createStartingResources();
     const reputation = createStartingReputation();
-    // Both forge-highlands and shattered-coast are discovered, so this shouldn't fail for that
+    // Both delhi and kolkata are discovered, so this shouldn't fail for that
     const check = canEstablishRoute(route, resources, reputation);
     // May fail for reputation or resources, but not for discovery
     const discoveryReasons = check.reasons.filter((r) => r.includes('not yet discovered'));
@@ -562,17 +562,17 @@ describe('Edge Case 11: Rapid turn advancement state consistency', () => {
 
   it('should maintain stable faction relation shifts over many iterations', () => {
     let relations = createInitialFactionRelations();
-    // Worsen iron-pact vs tidecallers 100 times — should floor at 'war'
+    // Worsen mughal-court vs east-india-company 100 times — should floor at 'war'
     for (let i = 0; i < 100; i++) {
-      relations = shiftRelation(relations, 'iron-pact', 'tidecallers', 'worsen');
+      relations = shiftRelation(relations, 'mughal-court', 'east-india-company', 'worsen');
     }
-    expect(getRelation(relations, 'iron-pact', 'tidecallers')).toBe('war');
+    expect(getRelation(relations, 'mughal-court', 'east-india-company')).toBe('war');
 
     // Improve them 100 times — should cap at 'allied'
     for (let i = 0; i < 100; i++) {
-      relations = shiftRelation(relations, 'iron-pact', 'tidecallers', 'improve');
+      relations = shiftRelation(relations, 'mughal-court', 'east-india-company', 'improve');
     }
-    expect(getRelation(relations, 'iron-pact', 'tidecallers')).toBe('allied');
+    expect(getRelation(relations, 'mughal-court', 'east-india-company')).toBe('allied');
   });
 });
 
@@ -682,50 +682,50 @@ describe('Edge Case 14: Reputation boundary clamping', () => {
 
   it('should clamp after repeated additions', () => {
     let rep = createStartingReputation();
-    // Add 200 reputation to iron-pact (should clamp at 100)
-    rep = changeReputation(rep, 'iron-pact', 200);
-    expect(rep['iron-pact']).toBe(100);
+    // Add 200 reputation to mughal-court (should clamp at 100)
+    rep = changeReputation(rep, 'mughal-court', 200);
+    expect(rep['mughal-court']).toBe(100);
   });
 
   it('should clamp after repeated subtractions', () => {
     let rep = createStartingReputation();
-    rep = changeReputation(rep, 'iron-pact', -200);
-    expect(rep['iron-pact']).toBe(-100);
+    rep = changeReputation(rep, 'mughal-court', -200);
+    expect(rep['mughal-court']).toBe(-100);
   });
 
   it('should correctly classify status at boundaries', () => {
     let rep = createStartingReputation();
     
     // At 0 = neutral
-    expect(getRelationshipStatus(rep, 'iron-pact')).toBe('neutral');
+    expect(getRelationshipStatus(rep, 'mughal-court')).toBe('neutral');
     
-    // At -31 (below hostilityThreshold -30 for iron-pact) = hostile
-    rep = changeReputation(rep, 'iron-pact', -31);
-    expect(getRelationshipStatus(rep, 'iron-pact')).toBe('hostile');
+    // At -36 (below hostilityThreshold -35 for mughal-court) = hostile
+    rep = changeReputation(rep, 'mughal-court', -36);
+    expect(getRelationshipStatus(rep, 'mughal-court')).toBe('hostile');
     
-    // Reset and go to 60 (allyThreshold for iron-pact) = allied
+    // Reset and go to 65 (allyThreshold for mughal-court) = allied
     rep = createStartingReputation();
-    rep = changeReputation(rep, 'iron-pact', 60);
-    expect(getRelationshipStatus(rep, 'iron-pact')).toBe('allied');
+    rep = changeReputation(rep, 'mughal-court', 65);
+    expect(getRelationshipStatus(rep, 'mughal-court')).toBe('allied');
   });
 
   it('should handle consecutive small changes correctly', () => {
     let rep = createStartingReputation();
     for (let i = 0; i < 150; i++) {
-      rep = changeReputation(rep, 'iron-pact', 1);
+      rep = changeReputation(rep, 'mughal-court', 1);
     }
-    expect(rep['iron-pact']).toBe(100); // clamped
+    expect(rep['mughal-court']).toBe(100); // clamped
     for (let i = 0; i < 300; i++) {
-      rep = changeReputation(rep, 'iron-pact', -1);
+      rep = changeReputation(rep, 'mughal-court', -1);
     }
-    expect(rep['iron-pact']).toBe(-100); // clamped
+    expect(rep['mughal-court']).toBe(-100); // clamped
   });
 
   it('should not affect other factions when clamping', () => {
     let rep = createStartingReputation();
-    rep = changeReputation(rep, 'iron-pact', 200);
-    expect(rep['tidecallers']).toBe(0); // unchanged
-    expect(rep['dustwalkers']).toBe(0); // unchanged
+    rep = changeReputation(rep, 'mughal-court', 200);
+    expect(rep['east-india-company']).toBe(0); // unchanged
+    expect(rep['rajput-clans']).toBe(0); // unchanged
   });
 });
 
@@ -735,8 +735,8 @@ describe('Edge Case 14: Reputation boundary clamping', () => {
 describe('Edge Case 15: Marketplace stock depletion', () => {
   it('should track marketplace items with limited stock', () => {
     const regions = createInitialRegions();
-    // Forge highlands has fuel for sale with available: 30
-    const fuelItem = regions['forge-highlands'].marketplace.find(
+    // Hyderabad has fuel for sale with available: 30
+    const fuelItem = regions['hyderabad'].marketplace.find(
       (m) => m.resourceType === 'fuel' && m.action === 'sell'
     );
     expect(fuelItem).toBeDefined();
@@ -745,7 +745,7 @@ describe('Edge Case 15: Marketplace stock depletion', () => {
 
   it('should allow buying up to but not beyond stock', () => {
     const regions = createInitialRegions();
-    const fuelItem = regions['forge-highlands'].marketplace.find(
+    const fuelItem = regions['hyderabad'].marketplace.find(
       (m) => m.resourceType === 'fuel' && m.action === 'sell'
     );
     expect(fuelItem!.available).toBe(30);
@@ -759,8 +759,8 @@ describe('Edge Case 15: Marketplace stock depletion', () => {
 
   it('should allow unlimited buying for items with available = -1', () => {
     const regions = createInitialRegions();
-    // Forge highlands buys food with available: -1
-    const foodBuyItem = regions['forge-highlands'].marketplace.find(
+    // Hyderabad buys food with available: -1
+    const foodBuyItem = regions['hyderabad'].marketplace.find(
       (m) => m.resourceType === 'food' && m.action === 'buy'
     );
     expect(foodBuyItem).toBeDefined();
@@ -771,7 +771,7 @@ describe('Edge Case 15: Marketplace stock depletion', () => {
 
   it('should update stock after purchase simulation', () => {
     const regions = createInitialRegions();
-    const region = regions['forge-highlands'];
+    const region = regions['hyderabad'];
     const item = region.marketplace.find((m) => m.resourceType === 'fuel' && m.action === 'sell')!;
     const originalAvailable = item.available;
     const bought = 10;

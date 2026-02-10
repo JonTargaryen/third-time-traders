@@ -141,12 +141,12 @@ test.describe('Reputation Panel', () => {
   });
 
   test('should show all 6 factions', async ({ page }) => {
-    await expect(page.getByText('The Iron Pact')).toBeVisible();
-    await expect(page.getByText('Tidecallers').first()).toBeVisible();
-    await expect(page.getByText('Dustwalkers').first()).toBeVisible();
-    await expect(page.getByText('The Verdant Commune')).toBeVisible();
-    await expect(page.getByText('Nightmarket Syndicate')).toBeVisible();
-    await expect(page.getByText('The Ashen Throne')).toBeVisible();
+    await expect(page.getByText('The Mughal Court')).toBeVisible();
+    await expect(page.getByText('The East India Company').first()).toBeVisible();
+    await expect(page.getByText('The Rajput Clans').first()).toBeVisible();
+    await expect(page.getByText('The Brahmin Council')).toBeVisible();
+    await expect(page.getByText('The Nightmarket Syndicate')).toBeVisible();
+    await expect(page.getByText("The Nizam's Court")).toBeVisible();
   });
 
   test('should show neutral status for all factions initially', async ({ page }) => {

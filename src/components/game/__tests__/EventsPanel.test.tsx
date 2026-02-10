@@ -37,8 +37,8 @@ function createMockEvent(overrides: Partial<GameEvent> = {}): GameEvent {
     turn: 1,
     duration: 3,
     expiresOnTurn: 4,
-    affectedRegions: ['forge-highlands'],
-    affectedFactions: ['iron-pact'],
+    affectedRegions: ['delhi'],
+    affectedFactions: ['mughal-court'],
     resourceDelta: { gold: -10 },
     reputationDelta: {},
     tradeMultiplier: 0.8,
@@ -54,12 +54,12 @@ describe('EventsPanel', () => {
 
   it('should render the events panel header', () => {
     render(<EventsPanel />);
-    expect(screen.getByText('Events & Alerts')).toBeInTheDocument();
+    expect(screen.getByText('World Events')).toBeInTheDocument();
   });
 
   it('should show "No events yet" when no events', () => {
     render(<EventsPanel />);
-    expect(screen.getByText(/No events yet/)).toBeInTheDocument();
+    expect(screen.getByText(/All is calm/)).toBeInTheDocument();
   });
 
   it('should show active events', () => {
@@ -118,7 +118,7 @@ describe('EventsPanel', () => {
       events: [createMockEvent()],
     });
     render(<EventsPanel />);
-    expect(screen.getByText(/Forge Highlands/)).toBeInTheDocument();
+    expect(screen.getByText(/Delhi/)).toBeInTheDocument();
   });
 
   it('should show event log / history section', () => {
@@ -238,17 +238,17 @@ describe('EventsPanel', () => {
 
   it('should show affected factions', () => {
     useGameStore.setState({
-      events: [createMockEvent({ affectedFactions: ['iron-pact', 'tidecallers'] })],
+      events: [createMockEvent({ affectedFactions: ['mughal-court', 'east-india-company'] })],
     });
     render(<EventsPanel />);
     // Should mention faction names
-    expect(screen.getByText(/Iron Pact/)).toBeInTheDocument();
+    expect(screen.getByText(/Mughal Court/)).toBeInTheDocument();
   });
 
   it('should highlight events affecting current location', () => {
     useGameStore.setState({
-      events: [createMockEvent({ affectedRegions: ['forge-highlands'] })],
-      caravan: { ...useGameStore.getState().caravan, currentRegion: 'forge-highlands' },
+      events: [createMockEvent({ affectedRegions: ['delhi'] })],
+      caravan: { ...useGameStore.getState().caravan, currentRegion: 'delhi' },
     });
     render(<EventsPanel />);
     // Event affecting current location should have special styling
@@ -262,6 +262,6 @@ describe('EventsPanel', () => {
     });
     render(<EventsPanel />);
     // Trade multiplier info should be shown
-    expect(screen.getByText(/0.5x/i)).toBeInTheDocument();
+    expect(screen.getByText(/×0.5/)).toBeInTheDocument();
   });
 });

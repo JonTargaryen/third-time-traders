@@ -66,26 +66,39 @@ export default function Home() {
           className="absolute -bottom-1/4 -right-1/4 h-[500px] w-[500px] rounded-full bg-purple-900/20 blur-3xl"
         />
         <div className="absolute left-1/3 top-1/2 h-[300px] w-[300px] rounded-full bg-amber-900/10 blur-3xl" />
-        {/* Floating trade particles */}
-        {Array.from({ length: 12 }).map((_, i) => (
+        {/* Floating trade particles (deterministic positions to avoid hydration mismatch) */}
+        {[
+          { left: 12, top: 65, dur: 7, delay: 0.5, dy: -150, dx: 20 },
+          { left: 85, top: 72, dur: 8, delay: 1.2, dy: -200, dx: -30 },
+          { left: 30, top: 80, dur: 6, delay: 2.0, dy: -180, dx: 15 },
+          { left: 55, top: 68, dur: 9, delay: 0.8, dy: -220, dx: -20 },
+          { left: 70, top: 75, dur: 7, delay: 3.0, dy: -160, dx: 35 },
+          { left: 20, top: 85, dur: 8, delay: 1.5, dy: -190, dx: -10 },
+          { left: 45, top: 62, dur: 6, delay: 4.0, dy: -170, dx: 25 },
+          { left: 90, top: 78, dur: 9, delay: 2.5, dy: -140, dx: -40 },
+          { left: 38, top: 70, dur: 7, delay: 0.3, dy: -210, dx: 10 },
+          { left: 62, top: 82, dur: 8, delay: 3.5, dy: -130, dx: -25 },
+          { left: 15, top: 88, dur: 6, delay: 1.8, dy: -250, dx: 30 },
+          { left: 78, top: 66, dur: 9, delay: 4.5, dy: -160, dx: -15 },
+        ].map((p, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0 }}
             animate={{
               opacity: [0, 0.3, 0],
-              y: [0, -100 - Math.random() * 200],
-              x: [0, (Math.random() - 0.5) * 80],
+              y: [0, p.dy],
+              x: [0, p.dx],
             }}
             transition={{
-              duration: 5 + Math.random() * 5,
-              delay: Math.random() * 5,
+              duration: p.dur,
+              delay: p.delay,
               repeat: Infinity,
               ease: 'easeOut',
             }}
             className="absolute text-sm"
             style={{
-              left: `${10 + Math.random() * 80}%`,
-              top: `${60 + Math.random() * 30}%`,
+              left: `${p.left}%`,
+              top: `${p.top}%`,
             }}
           >
             {['✨', '⭐', '💫', '🪙', '📦', '⚖️', '🗺️', '🧭', '💎', '🌟', '🔮', '🏺'][i]}
@@ -125,7 +138,7 @@ export default function Home() {
           transition={{ delay: 0.5 }}
           className="max-w-md text-base leading-relaxed text-zinc-400 sm:text-lg"
         >
-          Negotiate. Trade. Survive. Build your empire across a fractured world
+          Negotiate. Trade. Survive. Build your empire across ancient India
           where every deal could be your last — or your making.
         </motion.p>
 
@@ -219,12 +232,12 @@ export default function Home() {
           className="mt-4 flex gap-3"
         >
           {[
-            { name: 'Iron Pact', color: '#8B4513' },
-            { name: 'Tidecallers', color: '#1E90FF' },
-            { name: 'Dustwalkers', color: '#DAA520' },
-            { name: 'Verdant Commune', color: '#228B22' },
+            { name: 'Mughal Court', color: '#C41E3A' },
+            { name: 'East India Co.', color: '#1E3A5F' },
+            { name: 'Rajput Clans', color: '#DAA520' },
+            { name: 'Brahmin Council', color: '#FF6600' },
             { name: 'Nightmarket', color: '#4B0082' },
-            { name: 'Ashen Throne', color: '#2F2F2F' },
+            { name: 'Nizam\'s Court', color: '#228B22' },
           ].map((f, i) => (
             <motion.div
               key={f.name}

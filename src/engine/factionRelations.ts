@@ -19,18 +19,18 @@ export function createInitialFactionRelations(): FactionRelationMap {
   }
 
   // Lore-based starting relations
-  // Iron Pact & Ashen Throne: tense (competing for power)
-  setRelation(relations, 'iron-pact', 'ashen-throne', 'tense');
-  // Tidecallers & Verdant Commune: friendly (nature-aligned)
-  setRelation(relations, 'tidecallers', 'verdant-commune', 'friendly');
-  // Nightmarket & Ashen Throne: hostile (crime vs law)
-  setRelation(relations, 'nightmarket-syndicate', 'ashen-throne', 'hostile');
-  // Dustwalkers & Tidecallers: tense (desert vs sea)
-  setRelation(relations, 'dustwalkers', 'tidecallers', 'tense');
-  // Verdant Commune & Iron Pact: hostile (nature vs industry)
-  setRelation(relations, 'verdant-commune', 'iron-pact', 'hostile');
-  // Nightmarket & Dustwalkers: friendly (trade partners)
-  setRelation(relations, 'nightmarket-syndicate', 'dustwalkers', 'friendly');
+  // Mughal Court & Rajput Clans: tense (imperial authority vs warrior independence)
+  setRelation(relations, 'mughal-court', 'rajput-clans', 'tense');
+  // Brahmin Council & Nizam's Court: friendly (shared cultural patronage)
+  setRelation(relations, 'brahmin-council', 'nizams-court', 'friendly');
+  // Nightmarket Syndicate & Mughal Court: hostile (smugglers vs imperial law)
+  setRelation(relations, 'nightmarket-syndicate', 'mughal-court', 'hostile');
+  // Rajput Clans & East India Company: tense (territorial rivals)
+  setRelation(relations, 'rajput-clans', 'east-india-company', 'tense');
+  // Brahmin Council & East India Company: hostile (tradition vs colonialism)
+  setRelation(relations, 'brahmin-council', 'east-india-company', 'hostile');
+  // Nightmarket Syndicate & Nizam's Court: friendly (black-market trade partners)
+  setRelation(relations, 'nightmarket-syndicate', 'nizams-court', 'friendly');
 
   return relations;
 }

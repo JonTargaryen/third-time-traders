@@ -36,7 +36,7 @@ function createMockEvent(overrides: Partial<GameEvent> = {}): GameEvent {
 
 describe('generateTurnEvents', () => {
   it('should generate events for a given turn', () => {
-    const events = generateTurnEvents(5, ['forge-highlands', 'shattered-coast']);
+    const events = generateTurnEvents(5, ['delhi', 'kolkata']);
     expect(Array.isArray(events)).toBe(true);
     // Events are random, so we just check they're valid
     for (const event of events) {
@@ -56,7 +56,7 @@ describe('generateTurnEvents', () => {
     const validSeverities: EventSeverity[] = ['minor', 'moderate', 'major', 'catastrophic'];
     // Generate many events to get variety
     for (let i = 0; i < 20; i++) {
-      const events = generateTurnEvents(i + 1, ['forge-highlands']);
+      const events = generateTurnEvents(i + 1, ['delhi']);
       for (const event of events) {
         expect(validSeverities).toContain(event.severity);
       }
@@ -69,7 +69,7 @@ describe('generateTurnEvents', () => {
       'pirate-raid', 'discovery', 'plague', 'festival', 'smuggling', 'diplomatic',
     ];
     for (let i = 0; i < 20; i++) {
-      const events = generateTurnEvents(i + 1, ['forge-highlands', 'shattered-coast']);
+      const events = generateTurnEvents(i + 1, ['delhi', 'kolkata']);
       for (const event of events) {
         expect(validCategories).toContain(event.category);
       }
@@ -108,55 +108,55 @@ describe('pruneExpiredEvents', () => {
 
 describe('getRegionTradeMultiplier', () => {
   it('should return 1.0 with no events', () => {
-    expect(getRegionTradeMultiplier([], 'forge-highlands')).toBe(1.0);
+    expect(getRegionTradeMultiplier([], 'delhi')).toBe(1.0);
   });
 
   it('should apply event multiplier for affected region', () => {
     const events = [
-      createMockEvent({ affectedRegions: ['forge-highlands'], tradeMultiplier: 0.5 }),
+      createMockEvent({ affectedRegions: ['delhi'], tradeMultiplier: 0.5 }),
     ];
-    expect(getRegionTradeMultiplier(events, 'forge-highlands')).toBe(0.5);
+    expect(getRegionTradeMultiplier(events, 'delhi')).toBe(0.5);
   });
 
   it('should apply global events (no affected regions) to all regions', () => {
     const events = [
       createMockEvent({ affectedRegions: [], tradeMultiplier: 1.5 }),
     ];
-    expect(getRegionTradeMultiplier(events, 'forge-highlands')).toBe(1.5);
-    expect(getRegionTradeMultiplier(events, 'shattered-coast')).toBe(1.5);
+    expect(getRegionTradeMultiplier(events, 'delhi')).toBe(1.5);
+    expect(getRegionTradeMultiplier(events, 'kolkata')).toBe(1.5);
   });
 
   it('should multiply multiple event effects', () => {
     const events = [
-      createMockEvent({ id: 'e1', affectedRegions: ['forge-highlands'], tradeMultiplier: 0.5 }),
-      createMockEvent({ id: 'e2', affectedRegions: ['forge-highlands'], tradeMultiplier: 0.5 }),
+      createMockEvent({ id: 'e1', affectedRegions: ['delhi'], tradeMultiplier: 0.5 }),
+      createMockEvent({ id: 'e2', affectedRegions: ['delhi'], tradeMultiplier: 0.5 }),
     ];
-    expect(getRegionTradeMultiplier(events, 'forge-highlands')).toBe(0.25);
+    expect(getRegionTradeMultiplier(events, 'delhi')).toBe(0.25);
   });
 
   it('should floor at 0.1', () => {
     const events = [
       createMockEvent({ id: 'e1', affectedRegions: [], tradeMultiplier: 0.01 }),
     ];
-    expect(getRegionTradeMultiplier(events, 'forge-highlands')).toBe(0.1);
+    expect(getRegionTradeMultiplier(events, 'delhi')).toBe(0.1);
   });
 
   it('should not apply non-matching region events', () => {
     const events = [
-      createMockEvent({ affectedRegions: ['shattered-coast'], tradeMultiplier: 0.1 }),
+      createMockEvent({ affectedRegions: ['kolkata'], tradeMultiplier: 0.1 }),
     ];
-    expect(getRegionTradeMultiplier(events, 'forge-highlands')).toBe(1.0);
+    expect(getRegionTradeMultiplier(events, 'delhi')).toBe(1.0);
   });
 });
 
 describe('getEventsForRegion', () => {
   it('should return events affecting a specific region', () => {
     const events = [
-      createMockEvent({ id: 'e1', affectedRegions: ['forge-highlands'] }),
-      createMockEvent({ id: 'e2', affectedRegions: ['shattered-coast'] }),
+      createMockEvent({ id: 'e1', affectedRegions: ['delhi'] }),
+      createMockEvent({ id: 'e2', affectedRegions: ['kolkata'] }),
       createMockEvent({ id: 'e3', affectedRegions: [] }), // global
     ];
-    const result = getEventsForRegion(events, 'forge-highlands');
+    const result = getEventsForRegion(events, 'delhi');
     expect(result.length).toBe(2); // e1 + global e3
     expect(result.map((e) => e.id)).toContain('e1');
     expect(result.map((e) => e.id)).toContain('e3');
@@ -166,11 +166,11 @@ describe('getEventsForRegion', () => {
 describe('getEventsForFaction', () => {
   it('should return events affecting a specific faction', () => {
     const events = [
-      createMockEvent({ id: 'e1', affectedFactions: ['iron-pact'] }),
-      createMockEvent({ id: 'e2', affectedFactions: ['tidecallers'] }),
+      createMockEvent({ id: 'e1', affectedFactions: ['mughal-court'] }),
+      createMockEvent({ id: 'e2', affectedFactions: ['east-india-company'] }),
       createMockEvent({ id: 'e3', affectedFactions: [] }), // global
     ];
-    const result = getEventsForFaction(events, 'iron-pact');
+    const result = getEventsForFaction(events, 'mughal-court');
     expect(result.length).toBe(2);
   });
 });

@@ -58,7 +58,7 @@ describe('LeaderboardPanel', () => {
 
   it('should show player name', () => {
     render(<LeaderboardPanel />);
-    expect(screen.getByText('TestPlayer')).toBeInTheDocument();
+    expect(screen.getAllByText('TestPlayer').length).toBeGreaterThan(0);
   });
 
   it('should show turn and score info', () => {

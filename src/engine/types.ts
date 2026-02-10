@@ -14,20 +14,20 @@ export interface Resources {
 }
 
 export type FactionId =
-  | 'iron-pact'
-  | 'tidecallers'
-  | 'dustwalkers'
-  | 'verdant-commune'
+  | 'mughal-court'
+  | 'east-india-company'
+  | 'rajput-clans'
+  | 'brahmin-council'
   | 'nightmarket-syndicate'
-  | 'ashen-throne';
+  | 'nizams-court';
 
 export type RegionId =
-  | 'forge-highlands'
-  | 'shattered-coast'
-  | 'amber-wastes'
-  | 'emerald-canopy'
-  | 'the-undercity'
-  | 'obsidian-citadel';
+  | 'delhi'
+  | 'kolkata'
+  | 'jaisalmer'
+  | 'varanasi'
+  | 'bombay'
+  | 'hyderabad';
 
 export interface Faction {
   id: FactionId;
@@ -201,13 +201,13 @@ export const ALL_RESOURCE_TYPES: ResourceType[] = [
 ];
 
 export const ALL_FACTION_IDS: FactionId[] = [
-  'iron-pact', 'tidecallers', 'dustwalkers',
-  'verdant-commune', 'nightmarket-syndicate', 'ashen-throne',
+  'mughal-court', 'east-india-company', 'rajput-clans',
+  'brahmin-council', 'nightmarket-syndicate', 'nizams-court',
 ];
 
 export const ALL_REGION_IDS: RegionId[] = [
-  'forge-highlands', 'shattered-coast', 'amber-wastes',
-  'emerald-canopy', 'the-undercity', 'obsidian-citadel',
+  'delhi', 'kolkata', 'jaisalmer',
+  'varanasi', 'bombay', 'hyderabad',
 ];
 
 // ============================================================

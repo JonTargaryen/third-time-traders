@@ -29,14 +29,14 @@ describe('Game Store', () => {
 
     it('should initialize reputation at 0 for all factions', () => {
       const { reputation } = useGameStore.getState();
-      expect(reputation['iron-pact']).toBe(0);
-      expect(reputation['tidecallers']).toBe(0);
+      expect(reputation['mughal-court']).toBe(0);
+      expect(reputation['east-india-company']).toBe(0);
     });
 
     it('should initialize regions', () => {
       const { regions } = useGameStore.getState();
-      expect(regions['forge-highlands'].discovered).toBe(true);
-      expect(regions['amber-wastes'].discovered).toBe(false);
+      expect(regions['delhi'].discovered).toBe(true);
+      expect(regions['jaisalmer'].discovered).toBe(false);
     });
 
     it('should initialize trade routes', () => {
@@ -70,12 +70,12 @@ describe('Game Store', () => {
 
   describe('selectRegion', () => {
     it('should select a region', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
-      expect(useGameStore.getState().selectedRegion).toBe('forge-highlands');
+      useGameStore.getState().selectRegion('delhi');
+      expect(useGameStore.getState().selectedRegion).toBe('delhi');
     });
 
     it('should deselect with null', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('delhi');
       useGameStore.getState().selectRegion(null);
       expect(useGameStore.getState().selectedRegion).toBeNull();
     });
@@ -83,8 +83,8 @@ describe('Game Store', () => {
 
   describe('discoverRegion', () => {
     it('should discover an undiscovered region', () => {
-      useGameStore.getState().discoverRegion('amber-wastes');
-      expect(useGameStore.getState().regions['amber-wastes'].discovered).toBe(true);
+      useGameStore.getState().discoverRegion('jaisalmer');
+      expect(useGameStore.getState().regions['jaisalmer'].discovered).toBe(true);
     });
   });
 
@@ -97,24 +97,24 @@ describe('Game Store', () => {
 
   describe('changeReputation', () => {
     it('should change reputation with a faction', () => {
-      useGameStore.getState().changeReputation('iron-pact', 25);
-      expect(useGameStore.getState().reputation['iron-pact']).toBe(25);
+      useGameStore.getState().changeReputation('mughal-court', 25);
+      expect(useGameStore.getState().reputation['mughal-court']).toBe(25);
     });
   });
 
   describe('establishRoute', () => {
     it('should fail when reputation requirements not met', () => {
-      const result = useGameStore.getState().establishRoute('route-forge-coast');
+      const result = useGameStore.getState().establishRoute('route-delhi-kolkata');
       expect(result).toBe(false);
     });
 
     it('should succeed when all conditions met', () => {
-      // route-forge-coast requires iron-pact >= 10 and tidecallers >= 10, costs gold: 100, fuel: 20
-      useGameStore.getState().changeReputation('iron-pact', 15);
-      useGameStore.getState().changeReputation('tidecallers', 15);
-      const result = useGameStore.getState().establishRoute('route-forge-coast');
+      // route-delhi-kolkata requires mughal-court >= 10 and east-india-company >= 10, costs gold: 100, fuel: 20
+      useGameStore.getState().changeReputation('mughal-court', 15);
+      useGameStore.getState().changeReputation('east-india-company', 15);
+      const result = useGameStore.getState().establishRoute('route-delhi-kolkata');
       expect(result).toBe(true);
-      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-forge-coast');
+      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-delhi-kolkata');
       expect(route?.established).toBe(true);
       expect(useGameStore.getState().resources.gold).toBe(400);
     });
@@ -128,18 +128,18 @@ describe('Game Store', () => {
   describe('dismantleRoute', () => {
     it('should dismantle an established route', () => {
       // First establish
-      useGameStore.getState().changeReputation('iron-pact', 15);
-      useGameStore.getState().changeReputation('tidecallers', 15);
-      useGameStore.getState().establishRoute('route-forge-coast');
+      useGameStore.getState().changeReputation('mughal-court', 15);
+      useGameStore.getState().changeReputation('east-india-company', 15);
+      useGameStore.getState().establishRoute('route-delhi-kolkata');
       // Then dismantle
-      const result = useGameStore.getState().dismantleRoute('route-forge-coast');
+      const result = useGameStore.getState().dismantleRoute('route-delhi-kolkata');
       expect(result).toBe(true);
-      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-forge-coast');
+      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-delhi-kolkata');
       expect(route?.established).toBe(false);
     });
 
     it('should return false for unestablished route', () => {
-      const result = useGameStore.getState().dismantleRoute('route-forge-coast');
+      const result = useGameStore.getState().dismantleRoute('route-delhi-kolkata');
       expect(result).toBe(false);
     });
 
@@ -169,7 +169,7 @@ describe('Game Store', () => {
     it('should assign personnel to a route', () => {
       useGameStore.getState().hirePersonnel('guard');
       const person = useGameStore.getState().personnel[0];
-      const result = useGameStore.getState().assignPersonnel(person.id, 'route-forge-coast');
+      const result = useGameStore.getState().assignPersonnel(person.id, 'route-delhi-kolkata');
       expect(result).toBe(true);
       expect(useGameStore.getState().personnel[0].status).toBe('assigned');
     });
@@ -184,7 +184,7 @@ describe('Game Store', () => {
     it('should unassign assigned personnel', () => {
       useGameStore.getState().hirePersonnel('guard');
       const person = useGameStore.getState().personnel[0];
-      useGameStore.getState().assignPersonnel(person.id, 'route-forge-coast');
+      useGameStore.getState().assignPersonnel(person.id, 'route-delhi-kolkata');
       const result = useGameStore.getState().unassignPersonnel(person.id);
       expect(result).toBe(true);
       expect(useGameStore.getState().personnel[0].status).toBe('available');
@@ -208,37 +208,34 @@ describe('Game Store', () => {
     });
 
     it('should collect trade profits from established routes', () => {
-      useGameStore.getState().changeReputation('iron-pact', 15);
-      useGameStore.getState().changeReputation('tidecallers', 15);
-      useGameStore.getState().establishRoute('route-forge-coast');
+      useGameStore.getState().changeReputation('mughal-court', 15);
+      useGameStore.getState().changeReputation('east-india-company', 15);
+      useGameStore.getState().establishRoute('route-delhi-kolkata');
       const goldBefore = useGameStore.getState().resources.gold;
       useGameStore.getState().advanceTurn();
-      // route-forge-coast profits: gold: 15, food: 5
+      // route-delhi-kolkata profits: gold: 15, food: 5
       // plus BASE_INCOME gold: 5
-      // Events may also add/subtract gold randomly, so check minimum expected
       const goldAfter = useGameStore.getState().resources.gold;
       const baseExpected = goldBefore + 15 + 5;
-      // Gold should be at least base expected minus possible event losses,
-      // and the route profit + base income should have been applied
       expect(goldAfter).toBeGreaterThanOrEqual(baseExpected - 50);
-      expect(goldAfter).not.toBe(goldBefore); // gold should have changed
+      expect(goldAfter).not.toBe(goldBefore);
     });
   });
 
   describe('save/load', () => {
     it('should save and load game state', () => {
-      useGameStore.getState().changeReputation('iron-pact', 50);
+      useGameStore.getState().changeReputation('mughal-court', 50);
       useGameStore.getState().addResources({ gold: 200 });
       const saveData = useGameStore.getState().getSaveData();
 
       // Reset
       useGameStore.getState().newGame();
-      expect(useGameStore.getState().reputation['iron-pact']).toBe(0);
+      expect(useGameStore.getState().reputation['mughal-court']).toBe(0);
 
       // Load
       const result = useGameStore.getState().loadSaveData(saveData);
       expect(result).toBe(true);
-      expect(useGameStore.getState().reputation['iron-pact']).toBe(50);
+      expect(useGameStore.getState().reputation['mughal-court']).toBe(50);
       expect(useGameStore.getState().resources.gold).toBe(700);
     });
 
@@ -254,7 +251,7 @@ describe('Game Store', () => {
 
     it('should reset tab and selection on load', () => {
       useGameStore.getState().setActiveTab('inventory');
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('delhi');
       const saveData = useGameStore.getState().getSaveData();
       useGameStore.getState().loadSaveData(saveData);
       expect(useGameStore.getState().activeTab).toBe('world');

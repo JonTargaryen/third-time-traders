@@ -23,41 +23,41 @@ describe('World Engine', () => {
 
     it('should have correct initial discovery states', () => {
       const regions = createInitialRegions();
-      // forge-highlands, shattered-coast, obsidian-citadel are discovered
-      expect(regions['forge-highlands'].discovered).toBe(true);
-      expect(regions['shattered-coast'].discovered).toBe(true);
-      expect(regions['obsidian-citadel'].discovered).toBe(true);
-      // amber-wastes, emerald-canopy, the-undercity are undiscovered
-      expect(regions['amber-wastes'].discovered).toBe(false);
-      expect(regions['emerald-canopy'].discovered).toBe(false);
-      expect(regions['the-undercity'].discovered).toBe(false);
+      // delhi, kolkata, hyderabad are discovered
+      expect(regions['delhi'].discovered).toBe(true);
+      expect(regions['kolkata'].discovered).toBe(true);
+      expect(regions['hyderabad'].discovered).toBe(true);
+      // jaisalmer, varanasi, bombay are undiscovered
+      expect(regions['jaisalmer'].discovered).toBe(false);
+      expect(regions['varanasi'].discovered).toBe(false);
+      expect(regions['bombay'].discovered).toBe(false);
     });
 
     it('should create deep copies (not share references)', () => {
       const r1 = createInitialRegions();
       const r2 = createInitialRegions();
-      r1['forge-highlands'].discovered = false;
-      expect(r2['forge-highlands'].discovered).toBe(true);
+      r1['delhi'].discovered = false;
+      expect(r2['delhi'].discovered).toBe(true);
     });
   });
 
   describe('discoverRegion', () => {
     it('should discover an undiscovered region', () => {
       const regions = createInitialRegions();
-      const result = discoverRegion(regions, 'amber-wastes');
-      expect(result['amber-wastes'].discovered).toBe(true);
+      const result = discoverRegion(regions, 'jaisalmer');
+      expect(result['jaisalmer'].discovered).toBe(true);
     });
 
     it('should not modify already discovered region', () => {
       const regions = createInitialRegions();
-      const result = discoverRegion(regions, 'forge-highlands');
+      const result = discoverRegion(regions, 'delhi');
       expect(result).toBe(regions); // same reference = no change
     });
 
     it('should not mutate original', () => {
       const regions = createInitialRegions();
-      discoverRegion(regions, 'amber-wastes');
-      expect(regions['amber-wastes'].discovered).toBe(false);
+      discoverRegion(regions, 'jaisalmer');
+      expect(regions['jaisalmer'].discovered).toBe(false);
     });
 
     it('should handle invalid region ID', () => {
@@ -77,7 +77,7 @@ describe('World Engine', () => {
 
     it('should reflect changes after discovery', () => {
       const regions = createInitialRegions();
-      const updated = discoverRegion(regions, 'amber-wastes');
+      const updated = discoverRegion(regions, 'jaisalmer');
       const discovered = getDiscoveredRegions(updated);
       expect(discovered.length).toBe(4);
     });
@@ -95,28 +95,28 @@ describe('World Engine', () => {
   describe('areRegionsAdjacent', () => {
     it('should return true for adjacent regions', () => {
       const regions = createInitialRegions();
-      expect(areRegionsAdjacent(regions, 'forge-highlands', 'shattered-coast')).toBe(true);
+      expect(areRegionsAdjacent(regions, 'delhi', 'kolkata')).toBe(true);
     });
 
     it('should return false for non-adjacent regions', () => {
       const regions = createInitialRegions();
-      expect(areRegionsAdjacent(regions, 'forge-highlands', 'emerald-canopy')).toBe(false);
+      expect(areRegionsAdjacent(regions, 'delhi', 'bombay')).toBe(false);
     });
 
     it('should return false for invalid region', () => {
       const regions = createInitialRegions();
-      expect(areRegionsAdjacent(regions, 'nonexistent' as RegionId, 'forge-highlands')).toBe(false);
+      expect(areRegionsAdjacent(regions, 'nonexistent' as RegionId, 'delhi')).toBe(false);
     });
   });
 
   describe('getDiscoveredAdjacentRegions', () => {
     it('should return discovered adjacent regions', () => {
       const regions = createInitialRegions();
-      // forge-highlands is adjacent to shattered-coast (discovered), amber-wastes (not), obsidian-citadel (discovered)
-      const adj = getDiscoveredAdjacentRegions(regions, 'forge-highlands');
+      // delhi is adjacent to kolkata (discovered), jaisalmer (not), hyderabad (discovered)
+      const adj = getDiscoveredAdjacentRegions(regions, 'delhi');
       expect(adj.length).toBe(2);
-      expect(adj.map((r) => r.id)).toContain('shattered-coast');
-      expect(adj.map((r) => r.id)).toContain('obsidian-citadel');
+      expect(adj.map((r) => r.id)).toContain('kolkata');
+      expect(adj.map((r) => r.id)).toContain('hyderabad');
     });
 
     it('should return empty for invalid region', () => {
@@ -130,12 +130,12 @@ describe('World Engine', () => {
       const regions = createInitialRegions();
       const discoverable = getDiscoverableRegions(regions);
       const ids = discoverable.map((r) => r.id);
-      // amber-wastes is adj to forge-highlands (discovered)
-      expect(ids).toContain('amber-wastes');
-      // emerald-canopy is adj to shattered-coast (discovered)
-      expect(ids).toContain('emerald-canopy');
-      // the-undercity is adj to shattered-coast (discovered)
-      expect(ids).toContain('the-undercity');
+      // jaisalmer is adj to delhi (discovered)
+      expect(ids).toContain('jaisalmer');
+      // varanasi is adj to kolkata (discovered)
+      expect(ids).toContain('varanasi');
+      // bombay is adj to kolkata (discovered)
+      expect(ids).toContain('bombay');
     });
 
     it('should not include already discovered regions', () => {
@@ -155,54 +155,54 @@ describe('World Engine', () => {
   describe('findPath', () => {
     it('should find path between directly adjacent discovered regions', () => {
       const regions = createInitialRegions();
-      const path = findPath(regions, 'forge-highlands', 'shattered-coast');
-      expect(path).toEqual(['forge-highlands', 'shattered-coast']);
+      const path = findPath(regions, 'delhi', 'kolkata');
+      expect(path).toEqual(['delhi', 'kolkata']);
     });
 
     it('should find path through intermediate regions', () => {
       const regions = createInitialRegions();
-      // forge-highlands → obsidian-citadel → (only path via discovered)
-      const path = findPath(regions, 'forge-highlands', 'obsidian-citadel');
+      // delhi → hyderabad → (only path via discovered)
+      const path = findPath(regions, 'delhi', 'hyderabad');
       expect(path).not.toBeNull();
-      expect(path![0]).toBe('forge-highlands');
-      expect(path![path!.length - 1]).toBe('obsidian-citadel');
+      expect(path![0]).toBe('delhi');
+      expect(path![path!.length - 1]).toBe('hyderabad');
     });
 
     it('should return [from] when from === to', () => {
       const regions = createInitialRegions();
-      const path = findPath(regions, 'forge-highlands', 'forge-highlands');
-      expect(path).toEqual(['forge-highlands']);
+      const path = findPath(regions, 'delhi', 'delhi');
+      expect(path).toEqual(['delhi']);
     });
 
     it('should return null when no path exists through discovered regions', () => {
       const regions = createInitialRegions();
-      // the-undercity is undiscovered, so can't path through it
-      // emerald-canopy is also undiscovered
-      // From forge-highlands, shattered-coast is adj. From shattered-coast, emerald-canopy and the-undercity are adj but undiscovered
-      // So forge-highlands → emerald-canopy should have no path through discovered only
-      const path = findPath(regions, 'forge-highlands', 'emerald-canopy', true);
+      // bombay is undiscovered, so can't path through it
+      // varanasi is also undiscovered
+      // From delhi, kolkata is adj. From kolkata, varanasi and bombay are adj but undiscovered
+      // So delhi → varanasi should have no path through discovered only
+      const path = findPath(regions, 'delhi', 'varanasi', true);
       expect(path).toBeNull();
     });
 
     it('should find path through all regions when onlyDiscovered is false', () => {
       const regions = createInitialRegions();
-      const path = findPath(regions, 'forge-highlands', 'emerald-canopy', false);
+      const path = findPath(regions, 'delhi', 'varanasi', false);
       expect(path).not.toBeNull();
-      expect(path![0]).toBe('forge-highlands');
-      expect(path![path!.length - 1]).toBe('emerald-canopy');
+      expect(path![0]).toBe('delhi');
+      expect(path![path!.length - 1]).toBe('varanasi');
     });
 
     it('should handle region with invalid adjacent reference gracefully', () => {
       const regions = createInitialRegions();
       // Add a fake adjacent region that doesn't exist in the map
-      regions['forge-highlands'] = {
-        ...regions['forge-highlands'],
-        adjacentRegions: [...regions['forge-highlands'].adjacentRegions, 'nonexistent' as RegionId],
+      regions['delhi'] = {
+        ...regions['delhi'],
+        adjacentRegions: [...regions['delhi'].adjacentRegions, 'nonexistent' as RegionId],
       };
       // Should still find the path without crashing, skipping missing region
-      const path = findPath(regions, 'forge-highlands', 'shattered-coast', false);
+      const path = findPath(regions, 'delhi', 'kolkata', false);
       expect(path).not.toBeNull();
-      expect(path).toEqual(['forge-highlands', 'shattered-coast']);
+      expect(path).toEqual(['delhi', 'kolkata']);
     });
   });
 });

@@ -87,13 +87,13 @@ describe('applyEventToMarket', () => {
   it('should apply tradeMultiplier to affected regions', () => {
     const market = createInitialMarket();
     const event = createMockEvent({
-      affectedRegions: ['forge-highlands'],
+      affectedRegions: ['delhi'],
       tradeMultiplier: 2.0,
     });
     const result = applyEventToMarket(market, event);
-    expect(result.prices['forge-highlands']['fuel']).toBe(2.0);
+    expect(result.prices['delhi']['fuel']).toBe(2.0);
     // Non-affected regions should remain at 1.0
-    expect(result.prices['shattered-coast']['fuel']).toBe(1.0);
+    expect(result.prices['kolkata']['fuel']).toBe(1.0);
   });
 
   it('should apply to all regions when no specific regions listed', () => {
@@ -140,13 +140,13 @@ describe('applyEventToMarket', () => {
 describe('getPrice', () => {
   it('should return 1.0 for initial market', () => {
     const market = createInitialMarket();
-    expect(getPrice(market, 'forge-highlands', 'fuel')).toBe(1.0);
+    expect(getPrice(market, 'delhi', 'fuel')).toBe(1.0);
   });
 
   it('should return 1.0 for missing entries', () => {
     const market = createInitialMarket();
     // Even for valid region/resource, should return 1.0 via fallback
-    expect(getPrice(market, 'forge-highlands', 'gold')).toBe(1.0);
+    expect(getPrice(market, 'delhi', 'gold')).toBe(1.0);
   });
 });
 
@@ -204,10 +204,10 @@ describe('getMostVolatile', () => {
   it('should sort by deviation from 1.0 (most volatile first)', () => {
     let market = createInitialMarket();
     // Manually set extreme prices
-    market.prices['forge-highlands']['fuel'] = 2.5; // deviation 1.5
-    market.prices['shattered-coast']['food'] = 0.3; // deviation 0.7
+    market.prices['delhi']['fuel'] = 2.5; // deviation 1.5
+    market.prices['kolkata']['food'] = 0.3; // deviation 0.7
     const result = getMostVolatile(market, 2);
-    expect(result[0].region).toBe('forge-highlands');
+    expect(result[0].region).toBe('delhi');
     expect(result[0].resource).toBe('fuel');
   });
 });

@@ -26,7 +26,7 @@ describe('TradePanel', () => {
 
   it('should render all trade routes', () => {
     render(<TradePanel />);
-    expect(screen.getByText(/Forge Highlands ↔ Shattered Coast/)).toBeInTheDocument();
+    expect(screen.getByText(/Delhi ↔ Kolkata/)).toBeInTheDocument();
   });
 
   it('should show route costs', () => {
@@ -42,34 +42,34 @@ describe('TradePanel', () => {
   });
 
   it('should enable establish button when conditions are met', () => {
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
     render(<TradePanel />);
     expect(screen.getByText('Establish Route')).toBeInTheDocument();
   });
 
   it('should establish route when clicked', async () => {
     const user = userEvent.setup();
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
     render(<TradePanel />);
     await user.click(screen.getByText('Establish Route'));
-    const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-forge-coast');
+    const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-delhi-kolkata');
     expect(route?.established).toBe(true);
   });
 
   it('should show dismantle button for established routes', () => {
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
-    useGameStore.getState().establishRoute('route-forge-coast');
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
+    useGameStore.getState().establishRoute('route-delhi-kolkata');
     render(<TradePanel />);
     expect(screen.getByText(/Dismantle Route/)).toBeInTheDocument();
   });
 
   it('should show Active badge for established routes', () => {
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
-    useGameStore.getState().establishRoute('route-forge-coast');
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
+    useGameStore.getState().establishRoute('route-delhi-kolkata');
     render(<TradePanel />);
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
@@ -80,15 +80,15 @@ describe('TradePanel', () => {
   });
 
   it('should show profit per turn when routes established', () => {
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
-    useGameStore.getState().establishRoute('route-forge-coast');
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
+    useGameStore.getState().establishRoute('route-delhi-kolkata');
     render(<TradePanel />);
     expect(screen.getByText(/Earning per turn/)).toBeInTheDocument();
   });
 
   it('should show reputation check marks', () => {
-    useGameStore.getState().changeReputation('iron-pact', 15);
+    useGameStore.getState().changeReputation('mughal-court', 15);
     render(<TradePanel />);
     expect(screen.getAllByText(/✓/).length).toBeGreaterThan(0);
   });
@@ -105,12 +105,12 @@ describe('TradePanel', () => {
 
   it('should dismantle an established route when dismantle button clicked', async () => {
     const user = userEvent.setup();
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
-    useGameStore.getState().establishRoute('route-forge-coast');
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
+    useGameStore.getState().establishRoute('route-delhi-kolkata');
     render(<TradePanel />);
     await user.click(screen.getByText(/Dismantle Route/));
-    const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-forge-coast');
+    const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-delhi-kolkata');
     expect(route?.established).toBe(false);
   });
 
@@ -120,9 +120,9 @@ describe('TradePanel', () => {
   });
 
   it('should show "Established" label for established route cost section', () => {
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
-    useGameStore.getState().establishRoute('route-forge-coast');
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
+    useGameStore.getState().establishRoute('route-delhi-kolkata');
     render(<TradePanel />);
     expect(screen.getByText('Established')).toBeInTheDocument();
   });

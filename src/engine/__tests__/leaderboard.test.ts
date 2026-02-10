@@ -107,8 +107,8 @@ describe('calculateScore', () => {
   it('should give bonus for allied factions', () => {
     const base = createMockGameState();
     let rep = createStartingReputation();
-    rep = changeReputation(rep, 'iron-pact', 100);
-    rep = changeReputation(rep, 'tidecallers', 100);
+    rep = changeReputation(rep, 'mughal-court', 100);
+    rep = changeReputation(rep, 'east-india-company', 100);
     const allied = createMockGameState({ reputation: rep });
     expect(calculateScore(allied)).toBeGreaterThan(calculateScore(base));
   });

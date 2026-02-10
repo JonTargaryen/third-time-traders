@@ -19,84 +19,85 @@ describe('RegionDetail', () => {
   });
 
   it('should render region name when selected', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
-    expect(screen.getByText('Forge Highlands')).toBeInTheDocument();
+    expect(screen.getByText('Delhi')).toBeInTheDocument();
   });
 
   it('should render faction name', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
-    expect(screen.getByText('The Iron Pact')).toBeInTheDocument();
+    expect(screen.getByText('The Mughal Court')).toBeInTheDocument();
   });
 
   it('should render region description', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
-    expect(screen.getByText(/Volcanic mountains/)).toBeInTheDocument();
+    expect(screen.getByText(/seat of the Mughal Empire/)).toBeInTheDocument();
   });
 
   it('should show reputation status', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
     expect(screen.getByText(/neutral/i)).toBeInTheDocument();
   });
 
   it('should show available resources', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
-    expect(screen.getByText(/fuel: 40/)).toBeInTheDocument();
+    expect(screen.getByText(/gold: 50/)).toBeInTheDocument();
   });
 
   it('should show trade routes count', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
     expect(screen.getByText(/Trade Routes/)).toBeInTheDocument();
   });
 
   it('should close when close button clicked', async () => {
     const user = userEvent.setup();
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
     await user.click(screen.getByLabelText('Close'));
     expect(useGameStore.getState().selectedRegion).toBeNull();
   });
 
   it('should show discover buttons for adjacent undiscovered regions', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
-    // forge-highlands is adjacent to amber-wastes (undiscovered)
-    expect(screen.getByText(/Discover Amber Wastes/)).toBeInTheDocument();
+    // delhi is adjacent to jaisalmer (undiscovered)
+    expect(screen.getByText(/Discover Jaisalmer/)).toBeInTheDocument();
   });
 
   it('should discover region when discover button clicked', async () => {
     const user = userEvent.setup();
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
-    await user.click(screen.getByText(/Discover Amber Wastes/));
-    expect(useGameStore.getState().regions['amber-wastes'].discovered).toBe(true);
+    await user.click(screen.getByText(/Discover Jaisalmer/));
+    expect(useGameStore.getState().regions['jaisalmer'].discovered).toBe(true);
   });
 
   it('should show route status for each route', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
     expect(screen.getAllByText('Not established').length).toBeGreaterThan(0);
   });
 
   it('should not show discover section when no adjacent undiscovered regions exist', () => {
-    // Discover all regions adjacent to forge-highlands
-    useGameStore.getState().discoverRegion('amber-wastes');
-    // shattered-coast and obsidian-citadel are already discovered
-    useGameStore.getState().selectRegion('forge-highlands');
+    // Discover all regions adjacent to delhi
+    useGameStore.getState().discoverRegion('jaisalmer');
+    useGameStore.getState().discoverRegion('varanasi');
+    // kolkata and hyderabad are already discovered
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
     expect(screen.queryByText(/^Explore$/)).not.toBeInTheDocument();
   });
 
   it('should show Active text for established routes', () => {
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
-    useGameStore.getState().establishRoute('route-forge-coast');
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
+    useGameStore.getState().establishRoute('route-delhi-kolkata');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
@@ -113,12 +114,12 @@ describe('RegionDetail', () => {
     useGameStore.setState({
       regions: {
         ...state.regions,
-        'forge-highlands': {
-          ...state.regions['forge-highlands'],
+        'delhi': {
+          ...state.regions['delhi'],
           resources: {},
         },
       },
-      selectedRegion: 'forge-highlands',
+      selectedRegion: 'delhi',
     });
     render(<RegionDetail />);
     expect(screen.queryByText('Available Resources')).not.toBeInTheDocument();
@@ -130,12 +131,12 @@ describe('RegionDetail', () => {
     useGameStore.setState({
       regions: {
         ...state.regions,
-        'forge-highlands': {
-          ...state.regions['forge-highlands'],
-          adjacentRegions: ['amber-wastes', 'fake-region' as any],
+        'delhi': {
+          ...state.regions['delhi'],
+          adjacentRegions: ['jaisalmer', 'fake-region' as any],
         },
       },
-      selectedRegion: 'forge-highlands',
+      selectedRegion: 'delhi',
     });
     render(<RegionDetail />);
     // fake-region doesn't exist in regions, so fallback to the id
@@ -150,7 +151,7 @@ describe('RegionDetail', () => {
         ...state.tradeRoutes,
         {
           id: 'route-fake',
-          from: 'forge-highlands',
+          from: 'delhi',
           to: 'unknown-region' as any,
           established: false,
           costToEstablish: { gold: 10 },
@@ -158,7 +159,7 @@ describe('RegionDetail', () => {
           profitPerTurn: { gold: 1 },
         },
       ],
-      selectedRegion: 'forge-highlands',
+      selectedRegion: 'delhi',
     });
     render(<RegionDetail />);
     // The "other region" is unknown-region, which isn't in regions map → fallback to id
@@ -167,9 +168,9 @@ describe('RegionDetail', () => {
 
   it('should display the other region name in trade route list using fallback', () => {
     // Test the otherRegion?.name || otherRegionId fallback (line 97-103 in RegionDetail)
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<RegionDetail />);
     // Should show route destinations
-    expect(screen.getByText(/Shattered Coast/)).toBeInTheDocument();
+    expect(screen.getByText(/Kolkata/)).toBeInTheDocument();
   });
 });

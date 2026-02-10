@@ -79,7 +79,7 @@ describe('WorldMap', () => {
   it('should select region when clicking near one', () => {
     render(<WorldMap />);
     const canvas = screen.getByRole('img');
-    // forge-highlands is at position (0.25, 0.15) — we need to compute screen coords
+    // delhi is at position (0.25, 0.15) — we need to compute screen coords
     // Since container size is mocked, we click roughly there
     // The important thing is clicking doesn't crash
     fireEvent.click(canvas, { clientX: 100, clientY: 50 });
@@ -87,7 +87,7 @@ describe('WorldMap', () => {
   });
 
   it('should deselect on clicking empty space', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<WorldMap />);
     const canvas = screen.getByRole('img');
     fireEvent.click(canvas, { clientX: 0, clientY: 0 });
@@ -104,9 +104,9 @@ describe('WorldMap', () => {
 
   it('should draw trade routes between discovered regions', () => {
     // Establish a route to test the established=true branch
-    useGameStore.getState().changeReputation('iron-pact', 15);
-    useGameStore.getState().changeReputation('tidecallers', 15);
-    useGameStore.getState().establishRoute('route-forge-coast');
+    useGameStore.getState().changeReputation('mughal-court', 15);
+    useGameStore.getState().changeReputation('east-india-company', 15);
+    useGameStore.getState().establishRoute('route-delhi-kolkata');
     render(<WorldMap />);
     // The drawing function should have been called with established route styles
     expect(mockContext.moveTo).toHaveBeenCalled();
@@ -115,7 +115,7 @@ describe('WorldMap', () => {
   });
 
   it('should draw undiscovered routes with faint dashed style', () => {
-    // Both amber-wastes and the-undercity are undiscovered — route between them
+    // Both jaisalmer and bombay are undiscovered — route between them
     // The drawMap should skip routes where both endpoints are undiscovered (continue)
     // and draw faint dashed routes where only one endpoint is discovered
     render(<WorldMap />);
@@ -123,21 +123,21 @@ describe('WorldMap', () => {
   });
 
   it('should render selected region with glow effect', () => {
-    useGameStore.getState().selectRegion('forge-highlands');
+    useGameStore.getState().selectRegion('delhi');
     render(<WorldMap />);
     // Drawing with selected region should produce glow (extra arc call)
     expect(mockContext.arc).toHaveBeenCalled();
   });
 
   it('should toggle selection when clicking an already-selected region', () => {
-    // Select forge-highlands first
-    useGameStore.getState().selectRegion('forge-highlands');
+    // Select delhi first
+    useGameStore.getState().selectRegion('delhi');
     render(<WorldMap />);
     const canvas = screen.getByRole('img');
     
-    // forge-highlands is at position (0.25, 0.15), with 800x500 → pixel (200, 75)
+    // delhi is at position (0.45, 0.20), with 800x500 → pixel (360, 100)
     // getBoundingClientRect mocked to left:0, top:0
-    fireEvent.click(canvas, { clientX: 200, clientY: 75 });
+    fireEvent.click(canvas, { clientX: 360, clientY: 100 });
     
     // Clicking on the already-selected region should deselect it (toggle to null)
     expect(useGameStore.getState().selectedRegion).toBeNull();
@@ -146,23 +146,23 @@ describe('WorldMap', () => {
   it('should select a discovered region when clicking near it', () => {
     render(<WorldMap />);
     const canvas = screen.getByRole('img');
-    // forge-highlands at pixel (200, 75) — clicking within 24px radius
-    fireEvent.click(canvas, { clientX: 200, clientY: 75 });
-    expect(useGameStore.getState().selectedRegion).toBe('forge-highlands');
+    // delhi at pixel (360, 100) — clicking within 24px radius
+    fireEvent.click(canvas, { clientX: 360, clientY: 100 });
+    expect(useGameStore.getState().selectedRegion).toBe('delhi');
   });
 
   it('should draw routes with one discovered endpoint using dashed style', () => {
-    // forge-highlands (discovered) → amber-wastes (undiscovered) route exists
+    // delhi (discovered) → jaisalmer (undiscovered) route exists
     // This should hit the else branch (line 59-61) where one is discovered, one isn't, not established
     render(<WorldMap />);
-    // The drawMap renders routes including forge→amber-wastes
-    // Since amber-wastes is undiscovered, it uses the dashed faint style
+    // The drawMap renders routes including forge→jaisalmer
+    // Since jaisalmer is undiscovered, it uses the dashed faint style
     expect(mockContext.setLineDash).toHaveBeenCalled();
     expect(mockContext.stroke).toHaveBeenCalled();
   });
 
   it('should skip routes where both endpoints are undiscovered', () => {
-    // route-wastes-undercity: amber-wastes → the-undercity, both undiscovered
+    // route-wastes-undercity: jaisalmer → bombay, both undiscovered
     // The drawMap continues (skips drawing) for these routes
     const callCountBefore = mockContext.moveTo.mock.calls.length;
     render(<WorldMap />);

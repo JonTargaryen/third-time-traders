@@ -259,6 +259,7 @@ export default function ReputationPanel() {
   const activeMissions = missions.filter((m) => m.status === 'active');
   const availableMissions = missions.filter((m) => m.status === 'available');
   const completedMissions = missions.filter((m) => m.status === 'completed');
+  const failedMissions = missions.filter((m) => m.status === 'failed' || m.status === 'expired');
   const unlockedAchievements = achievements.filter((a) => a.unlocked);
 
   return (
@@ -439,6 +440,17 @@ export default function ReputationPanel() {
               </h3>
               <div className="space-y-2">
                 {completedMissions.map((m) => <MissionCard key={m.id} mission={m} />)}
+              </div>
+            </div>
+          )}
+
+          {failedMissions.length > 0 && (
+            <div>
+              <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+                ❌ Failed ({failedMissions.length})
+              </h3>
+              <div className="space-y-2">
+                {failedMissions.map((m) => <MissionCard key={m.id} mission={m} />)}
               </div>
             </div>
           )}

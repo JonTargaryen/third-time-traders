@@ -65,28 +65,28 @@ export const SEASONAL_BONUSES: Record<string, Record<string, number>> = {
 /** Seasonal flavor text shown in turn summaries */
 export const SEASONAL_FLAVOR: Record<string, string[]> = {
   spring: [
-    '🌸 Wildflowers bloom across the trade roads.',
-    '🐣 Baby animals frolic near your caravan.',
-    '🌈 A rainbow arcs over the horizon — good fortune!',
-    '🌱 New growth sprouts from the roadside.',
+    '🌸 Gulmohar trees burst into flame-red blossoms along the trade roads.',
+    '� Elephants bathe in the river as your caravan passes.',
+    '🌈 A rainbow arcs over the Ganges — an auspicious sign!',
+    '🌱 Fresh mangoes appear at every roadside stall.',
   ],
   summer: [
-    '☀️ The sun beats down relentlessly on the plains.',
-    '🏖️ Travelers seek shade along the dusty roads.',
-    '🔥 Heat mirages shimmer on the horizon.',
-    '🌅 Long golden evenings give extra time for trading.',
+    '☀️ The loo wind scorches the plains relentlessly.',
+    '🏖️ Travelers seek shade under banyan trees along dusty roads.',
+    '🔥 Heat mirages shimmer above the Thar Desert sands.',
+    '🌅 Long golden evenings by the ghats give extra time for trading.',
   ],
   autumn: [
-    '🍂 Leaves swirl around your caravan in amber spirals.',
-    '🎃 Harvest festivals light up nearby villages.',
-    '🌾 Farmers bring overflowing wagons to market.',
-    '🦉 Night comes early; owls hoot from the trees.',
+    '🪔 Diwali lanterns and oil lamps light up every village bazaar.',
+    '� Festival fireworks illuminate the sky above the forts.',
+    '🌾 Farmers bring overflowing bullock carts to harvest markets.',
+    '� Peacocks dance in the fields as the monsoon retreats.',
   ],
   winter: [
-    '❄️ Frost coats every surface in glittering crystal.',
-    '🏔️ Snow blankets the mountain passes.',
-    '🧣 Your crew huddles around the campfire for warmth.',
-    '⛄ Children build snow figures near the trade posts.',
+    '❄️ Morning fog blankets the Indo-Gangetic plain.',
+    '🏔️ Snow glistens on the distant Himalayan peaks.',
+    '🧣 Your crew huddles around the campfire, sipping chai.',
+    '🌙 Clear winter nights reveal a sky full of stars over the Deccan.',
   ],
 };
 
@@ -102,29 +102,29 @@ export const RESOURCE_DESCRIPTIONS: Record<string, string> = {
 
 /** Faction personality quips for NPC interactions (shown randomly) */
 export const FACTION_QUIPS: Record<string, string[]> = {
-  'iron-pact': [
-    '"Steel does not lie. Neither should a trader."',
-    '"Bring fuel, and you bring respect."',
-    '"The forge remembers those who feed it."',
-    '"We judge not by words, but by the weight of your wagon."',
+  'mughal-court': [
+    '"The Emperor\'s seal opens every gate. Earn it."',
+    '"Bring tribute, and you bring respect."',
+    '"The Red Fort remembers those who serve it well."',
+    '"We judge not by words, but by the weight of your coffers."',
   ],
-  'tidecallers': [
-    '"The tides tell us much about you, trader."',
-    '"Cast your nets wide and your worries will drown."',
-    '"Every wave was once a raindrop — start small."',
-    '"The sea favors the bold, but spares the wise."',
+  'east-india-company': [
+    '"The ledger tells us much about you, trader."',
+    '"Cast your nets wide and your competitors will drown."',
+    '"Every rupee was once a risk — start boldly."',
+    '"The Company favors the efficient, but rewards the loyal."',
   ],
-  'dustwalkers': [
-    '"The sand buries fools and polishes diamonds."',
-    '"Walk with patience; the desert reveals its secrets slowly."',
-    '"We trade in trust. Earn it drop by drop."',
-    '"Every oasis was once someone\'s impossible dream."',
+  'rajput-clans': [
+    '"The desert sands bury cowards and forge warriors."',
+    '"Ride with honour; the dunes reveal their secrets to the brave."',
+    '"We trade in steel and trust. Earn both blade by blade."',
+    '"Every fortress was once someone\'s impossible dream."',
   ],
-  'verdant-commune': [
-    '"The forest remembers kindness for a thousand seasons."',
-    '"Take only what you need; give back what you can."',
-    '"Even the mightiest oak grew from a gentle seed."',
-    '"We grow together, or we wither alone."',
+  'brahmin-council': [
+    '"The Vedas remember wisdom for a thousand ages."',
+    '"Seek only what you need; give back what you can."',
+    '"Even the mightiest temple grew from a single prayer."',
+    '"We rise together, or we fade into dust."',
   ],
   'nightmarket-syndicate': [
     '"In the dark, gold shines brightest."',
@@ -132,26 +132,26 @@ export const FACTION_QUIPS: Record<string, string[]> = {
     '"Trust is expensive. Betrayal costs more."',
     '"Everyone has a price. What\'s yours?"',
   ],
-  'ashen-throne': [
+  'nizams-court': [
     '"Power flows to those who know how to serve it."',
-    '"The Throne sees all who come bearing gifts."',
-    '"Loyalty today buys influence tomorrow."',
-    '"In the shadow of greatness, even traders can rise."',
+    '"The Nizam sees all who come bearing gifts."',
+    '"Loyalty today buys diamonds tomorrow."',
+    '"In the shadow of Golconda, even traders can rise."',
   ],
 };
 
 /** Trade route names for display (flavor) */
 export const TRADE_ROUTE_NAMES: Record<string, string> = {
-  'forge-highlands-shattered-coast': 'The Iron Tide Route',
-  'forge-highlands-amber-wastes': 'The Ember Road',
-  'forge-highlands-obsidian-citadel': 'The Throne\'s Highway',
-  'shattered-coast-emerald-canopy': 'The Green Current',
-  'shattered-coast-the-undercity': 'The Shadow Harbor',
-  'amber-wastes-emerald-canopy': 'The Oasis Trail',
-  'amber-wastes-the-undercity': 'The Dust Tunnel',
-  'emerald-canopy-the-undercity': 'The Root Passage',
-  'the-undercity-obsidian-citadel': 'The Dark Ascent',
-  'obsidian-citadel-amber-wastes': 'The Ash Wind Path',
+  'delhi-kolkata': 'The Grand Trunk Road',
+  'delhi-jaisalmer': 'The Silk Desert Road',
+  'delhi-hyderabad': 'The Deccan Highway',
+  'kolkata-varanasi': 'The Sacred River Route',
+  'kolkata-bombay': 'The Coastal Spice Lane',
+  'jaisalmer-bombay': 'The Salt Caravan Trail',
+  'jaisalmer-hyderabad': 'The Diamond Dust Path',
+  'varanasi-hyderabad': 'The Pilgrim\'s Passage',
+  'bombay-hyderabad': 'The Nightrunner\'s Route',
+  'bombay-jaisalmer': 'The Western Frontier Road',
 };
 
 /** Milestone messages — shown when player hits certain thresholds */
@@ -204,12 +204,12 @@ export const DIFFICULTY_SETTINGS = {
 
 /** Region danger levels for travel tooltip */
 export const REGION_DANGER: Record<string, { level: string; color: string; emoji: string }> = {
-  'forge-highlands': { level: 'Moderate', color: 'text-amber-500', emoji: '⚠️' },
-  'shattered-coast': { level: 'Safe', color: 'text-green-500', emoji: '🟢' },
-  'amber-wastes': { level: 'Dangerous', color: 'text-red-500', emoji: '🔴' },
-  'emerald-canopy': { level: 'Safe', color: 'text-green-500', emoji: '🟢' },
-  'the-undercity': { level: 'Dangerous', color: 'text-red-500', emoji: '🔴' },
-  'obsidian-citadel': { level: 'Very Dangerous', color: 'text-red-600', emoji: '💀' },
+  'delhi': { level: 'Moderate', color: 'text-amber-500', emoji: '⚠️' },
+  'kolkata': { level: 'Safe', color: 'text-green-500', emoji: '🟢' },
+  'jaisalmer': { level: 'Dangerous', color: 'text-red-500', emoji: '🔴' },
+  'varanasi': { level: 'Safe', color: 'text-green-500', emoji: '🟢' },
+  'bombay': { level: 'Dangerous', color: 'text-red-500', emoji: '🔴' },
+  'hyderabad': { level: 'Very Dangerous', color: 'text-red-600', emoji: '💀' },
 };
 
 /** How many turns between auto-mission generation */
@@ -237,53 +237,53 @@ export const TRAVEL_ENCOUNTER_CHANCE = 0.25;
 
 /** Weather descriptions per region+season (ambient flavor in region detail) */
 export const REGION_WEATHER: Record<string, Record<string, string>> = {
-  'forge-highlands': {
-    spring: '🌤️ Warm updrafts carry ash from the dormant forges.',
-    summer: '🔥 Heat waves shimmer above the lava flows.',
-    autumn: '🌫️ Fog rolls through the mountain passes.',
-    winter: '🌨️ Snow melts on contact with the warm volcanic stone.',
+  'delhi': {
+    spring: '🌤️ Warm breezes carry the scent of jasmine through the Red Fort gardens.',
+    summer: '🔥 The loo wind bakes the sandstone streets. Seek shade in the bazaar.',
+    autumn: '🌫️ Morning mist settles over the Yamuna riverbanks.',
+    winter: '🌨️ Crisp Delhi winter — perfect chai weather by the roadside.',
   },
-  'shattered-coast': {
-    spring: '🌊 Gentle tides lap at the rebuilt harbors.',
-    summer: '⛵ Calm seas and warm breezes — perfect sailing weather.',
-    autumn: '🌧️ Squalls blow in from the open ocean.',
-    winter: '❄️ Ice forms on the tide pools at dawn.',
+  'kolkata': {
+    spring: '🌊 Gentle tides lap at the Hooghly docks.',
+    summer: '⛵ Humid monsoon air and warm breezes — tea ships arrive daily.',
+    autumn: '🌧️ Durga Puja festivities light up the rain-soaked streets.',
+    winter: '❄️ Cool fog rolls in from the river at dawn.',
   },
-  'amber-wastes': {
-    spring: '🌵 Desert wildflowers bloom after rare rains.',
-    summer: '🥵 The sand is hot enough to cook on.',
-    autumn: '🌅 Golden dust storms paint the sky amber.',
+  'jaisalmer': {
+    spring: '🌵 Desert wildflowers bloom after rare rains near the dunes.',
+    summer: '🥵 The Thar sands are hot enough to fry a chapati.',
+    autumn: '🌅 Golden sandstorms paint the sky amber over the fort.',
     winter: '🌙 Freezing desert nights under crystal-clear stars.',
   },
-  'emerald-canopy': {
-    spring: '🌸 The canopy explodes with blossoms and birdsong.',
-    summer: '🦜 Lush green everywhere — the jungle thrives.',
-    autumn: '🍄 Mushrooms and fungi carpet the forest floor.',
-    winter: '🌿 The evergreen canopy shields from the cold.',
+  'varanasi': {
+    spring: '🌸 The ghats are carpeted with marigold blossoms and incense smoke.',
+    summer: '🦜 The monsoon swells the Ganges; pilgrims still come in droves.',
+    autumn: '🍄 Wet season herbs and medicinal plants flourish along the river.',
+    winter: '🌿 The ancient temples shimmer in cool, clear morning light.',
   },
-  'the-undercity': {
-    spring: '💡 Lanterns flicker in the perpetually dim tunnels.',
-    summer: '🦇 The underground stays cool while the world above swelters.',
-    autumn: '🕯️ Festival lights decorate the market caverns.',
-    winter: '🔥 Warm braziers line every corridor and alcove.',
+  'bombay': {
+    spring: '💡 Lantern-lit alleys bustle with merchants after dark.',
+    summer: '🦇 The monsoon rains drive traders into the covered bazaars.',
+    autumn: '🕯️ Festival lights decorate the harbour-side warehouses.',
+    winter: '🔥 Warm braziers line the narrow lanes of the old port quarter.',
   },
-  'obsidian-citadel': {
-    spring: '⚡ Lightning dances between the obsidian spires.',
-    summer: '🏰 The citadel gleams like black glass in the sun.',
-    autumn: '🌑 Dark clouds gather around the fortress.',
-    winter: '🥶 Bitter winds howl through the battlements.',
+  'hyderabad': {
+    spring: '⚡ Thunderstorms roll over the Charminar and Golconda Fort.',
+    summer: '🏰 The Deccan plateau shimmers in the relentless heat.',
+    autumn: '🌑 Dark monsoon clouds gather around the Nizam\'s palaces.',
+    winter: '🥶 Cool winds sweep across the rocky Deccan highlands.',
   },
 };
 
 /** Loading/title screen rotating quotes from NPCs */
 export const TITLE_SCREEN_QUOTES: { text: string; author: string; emoji: string }[] = [
-  { text: 'The world gave us a first chance, and we stumbled. It gave us a second, and we fell. But we rose.', author: 'Silk, Master Negotiator', emoji: '⚖️' },
-  { text: 'Steel does not lie. Neither should a trader.', author: 'Commander Forge', emoji: '⚒️' },
-  { text: 'The tides tell us much about you, trader.', author: 'Captain Coral', emoji: '🧜' },
-  { text: 'The sand buries fools and polishes diamonds.', author: 'Elder Sandstep', emoji: '🏜️' },
-  { text: 'Even the mightiest oak grew from a gentle seed.', author: 'Willow Bloom', emoji: '🌿' },
+  { text: 'Hindustan gave us a first chance, and we stumbled. It gave us a second, and we fell. But we rose.', author: 'Silk, Master Negotiator', emoji: '⚖️' },
+  { text: 'The Emperor\'s seal opens every gate. Earn it.', author: 'Grand Vizier Mirza', emoji: '👑' },
+  { text: 'The ledger tells us much about you, trader.', author: 'Governor Whitfield', emoji: '📒' },
+  { text: 'The desert sands bury cowards and forge warriors.', author: 'Thakur Bhairav Singh', emoji: '🏜️' },
+  { text: 'Even the mightiest temple grew from a single prayer.', author: 'Pandit Devdas', emoji: '🙏' },
   { text: 'In the dark, gold shines brightest.', author: 'Shadow Whisper', emoji: '🕵️' },
-  { text: 'Power flows to those who know how to serve it.', author: 'Magistrate Ashveil', emoji: '👑' },
+  { text: 'Power flows to those who know how to serve it.', author: 'Diwan Quli Khan', emoji: '�' },
   { text: 'Every trade route begins with a single footstep.', author: 'Old Trader Proverb', emoji: '🐫' },
   { text: 'Fortune favors the persistent, not merely the bold.', author: 'The Merchant\'s Codex', emoji: '📜' },
   { text: 'A wise trader knows when to hold and when to fold.', author: 'Shadow Whisper', emoji: '🃏' },
@@ -330,35 +330,35 @@ export const CARAVAN_STATUS_MESSAGES: Record<string, string[]> = {
 
 /** Region arrival flavor messages (shown briefly when traveling to a new region) */
 export const ARRIVAL_MESSAGES: Record<string, string[]> = {
-  'forge-highlands': [
-    'The smell of molten iron fills the air as you approach the forges.',
-    'Sparks fly from the great furnaces visible on the mountainside.',
-    'The ground trembles with the rhythm of a thousand hammers.',
+  'delhi': [
+    'The scent of rosewater and sandalwood fills the air as you approach Chandni Chowk.',
+    'Red sandstone walls of the great fort loom above the bustling bazaars.',
+    'The rhythmic chanting of prayers echoes from the Jama Masjid.',
   ],
-  'shattered-coast': [
-    'Salt spray and seabird calls greet your caravan.',
-    'Colorful fishing boats bob in the harbor as you arrive.',
-    'The crash of waves against the breakwater welcomes you.',
+  'kolkata': [
+    'Salt spray and the cry of river birds greet your caravan at the Hooghly docks.',
+    'East India Company warehouses line the waterfront as you arrive.',
+    'The clatter of tea crates and the bustle of longshoremen welcome you.',
   ],
-  'amber-wastes': [
-    'An endless sea of golden sand stretches before you.',
-    'The desert sun beats down as mirages dance on the horizon.',
-    'Ancient carved stones mark the desert trade routes.',
+  'jaisalmer': [
+    'An endless sea of golden sand stretches before you, the fort rising like a mirage.',
+    'The desert sun beats down as your camels trudge along the ancient caravan route.',
+    'Carved havelis and sandstone walls mark the Golden City of the Rajputs.',
   ],
-  'emerald-canopy': [
-    'Sunlight filters through the enormous canopy above.',
-    'The scent of flowers and rich earth fills your lungs.',
-    'Vines and bridges connect the treehouse settlements.',
+  'varanasi': [
+    'Incense smoke and marigold garlands drift through the ancient ghats.',
+    'The sacred Ganges glimmers in the light as temple bells ring.',
+    'Pilgrims and scholars crowd the narrow stone lanes of the holy city.',
   ],
-  'the-undercity': [
-    'Flickering lanterns guide you into the underground markets.',
-    'The cool, echoing tunnels swallow you whole.',
-    'Whispers and the clink of coins fill the shadowy corridors.',
+  'bombay': [
+    'Flickering oil lamps guide you into the crowded harbour-side bazaars.',
+    'The humid salt air and the clink of coins fill the narrow lanes.',
+    'Whispers of contraband deals and rare spices echo from every alley.',
   ],
-  'obsidian-citadel': [
-    'The massive obsidian gates creak open before your caravan.',
-    'Imperial banners flutter from the dark glass towers.',
-    'Guards in black armor watch your every move.',
+  'hyderabad': [
+    'The massive gates of Golconda Fort creak open before your caravan.',
+    'The Nizam\'s banners flutter from the minarets of the Charminar.',
+    'Guards in jeweled turbans watch your every move.',
   ],
 };
 
@@ -381,7 +381,7 @@ export const TURN_MILESTONES: Record<number, { message: string; emoji: string }>
   15: { message: 'Fifteen turns! The trade routes know your name.', emoji: '🗺️' },
   20: { message: 'Twenty turns! You\'re a legend in the making.', emoji: '⭐' },
   25: { message: 'Quarter century of turns! The world trembles at your arrival.', emoji: '👑' },
-  30: { message: 'Thirty turns! Even the Ashen Throne respects you now.', emoji: '🏆' },
+  30: { message: 'Thirty turns! Even the Nizam\'s Court respects you now.', emoji: '🏆' },
   40: { message: 'Forty turns! Master Trader status achieved!', emoji: '🎖️' },
   50: { message: 'Fifty turns! Victory is within your grasp!', emoji: '🏅' },
 };

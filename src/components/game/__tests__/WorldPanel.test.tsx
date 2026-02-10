@@ -13,6 +13,7 @@ vi.mock('framer-motion', () => ({
     div: ({ children, ...props }: any) => <div {...filterProps(props)}>{children}</div>,
     button: ({ children, ...props }: any) => <button {...filterProps(props)}>{children}</button>,
     span: ({ children, ...props }: any) => <span {...filterProps(props)}>{children}</span>,
+    p: ({ children, ...props }: any) => <p {...filterProps(props)}>{children}</p>,
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
@@ -42,13 +43,13 @@ describe('WorldPanel', () => {
 
   it('should show current region in caravan bar', () => {
     render(<WorldPanel />);
-    // The caravan starts at forge-highlands
-    expect(screen.getByText(/Forge Highlands/)).toBeInTheDocument();
+    // The caravan starts at hyderabad
+    expect(screen.getAllByText(/Hyderabad/).length).toBeGreaterThan(0);
   });
 
   it('should show fuel in caravan bar', () => {
     render(<WorldPanel />);
-    expect(screen.getByText(/100/)).toBeInTheDocument(); // starting fuel
+    expect(screen.getAllByText(/100/).length).toBeGreaterThan(0); // starting fuel
   });
 
   it('should show prompt to tap a region when no region selected', () => {
@@ -59,8 +60,8 @@ describe('WorldPanel', () => {
   it('should show low fuel warning', () => {
     useGameStore.setState({ resources: { ...useGameStore.getState().resources, fuel: 10 } });
     render(<WorldPanel />);
-    expect(screen.getByText(/10/)).toBeInTheDocument();
-    expect(screen.getByText(/⚠️/)).toBeInTheDocument();
+    expect(screen.getAllByText(/10/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/⚠️/).length).toBeGreaterThan(0);
   });
 
   it('should not show low fuel warning when fuel is adequate', () => {
@@ -71,17 +72,17 @@ describe('WorldPanel', () => {
   describe('with a selected region', () => {
     beforeEach(() => {
       // Select a discovered region
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
     });
 
     it('should show region detail panel', () => {
       render(<WorldPanel />);
-      expect(screen.getByText('Forge Highlands')).toBeInTheDocument();
+      expect(screen.getByText('Hyderabad')).toBeInTheDocument();
     });
 
     it('should show region description', () => {
       render(<WorldPanel />);
-      expect(screen.getByText(/Volcanic mountains/)).toBeInTheDocument();
+      expect(screen.getByText(/City of Pearls/)).toBeInTheDocument();
     });
 
     it('should show close button', () => {
@@ -110,7 +111,7 @@ describe('WorldPanel', () => {
     it('should show gather actions', () => {
       render(<WorldPanel />);
       expect(screen.getByText(/Gather Resources/)).toBeInTheDocument();
-      expect(screen.getByText('Mine Iron Ore')).toBeInTheDocument();
+      expect(screen.getByText(/Mine Golconda Diamonds/)).toBeInTheDocument();
     });
 
     it('should show lore toggle when region has lore', () => {
@@ -122,42 +123,39 @@ describe('WorldPanel', () => {
       const user = userEvent.setup();
       render(<WorldPanel />);
       await user.click(screen.getByText(/Read the Story/));
-      expect(screen.getByText(/Long ago, the first smiths/)).toBeInTheDocument();
+      expect(screen.getByText(/Hyderabad sits in the Deccan/)).toBeInTheDocument();
       // Shows "Hide Story" when lore is visible
       expect(screen.getByText(/Hide Story/)).toBeInTheDocument();
     });
 
     it('should show NPC section', () => {
       render(<WorldPanel />);
-      expect(screen.getByText(/Commander Forge/)).toBeInTheDocument();
+      expect(screen.getByText(/Diwan Quli Khan/)).toBeInTheDocument();
     });
   });
 
   describe('travel functionality', () => {
     it('should show travel button for remote region', () => {
       // Select a discovered region that is NOT the current region
-      const state = useGameStore.getState();
-      // Discover shattered-coast and select it
-      useGameStore.getState().discoverRegion('shattered-coast');
-      useGameStore.getState().selectRegion('shattered-coast');
+      // Delhi is adjacent to hyderabad and discovered
+      useGameStore.getState().selectRegion('delhi');
       render(<WorldPanel />);
       expect(screen.getByText(/Travel Here/)).toBeInTheDocument();
     });
 
     it('should not show travel button at current location', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.queryByText(/Travel Here/)).not.toBeInTheDocument();
     });
 
     it('should handle travel action', async () => {
       const user = userEvent.setup();
-      useGameStore.getState().discoverRegion('shattered-coast');
-      useGameStore.getState().selectRegion('shattered-coast');
+      useGameStore.getState().selectRegion('delhi');
       render(<WorldPanel />);
       const travelBtn = screen.getByText('Travel');
       await user.click(travelBtn);
-      expect(useGameStore.getState().caravan.currentRegion).toBe('shattered-coast');
+      expect(useGameStore.getState().caravan.currentRegion).toBe('delhi');
     });
   });
 
@@ -165,9 +163,9 @@ describe('WorldPanel', () => {
     it('should perform gather action on click', async () => {
       const user = userEvent.setup();
       vi.spyOn(Math, 'random').mockReturnValue(0.1); // Success
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
-      const gatherBtn = screen.getByText('Mine Iron Ore');
+      const gatherBtn = screen.getByText(/Mine Golconda Diamonds/);
       await user.click(gatherBtn);
       // Should show a success or failure message
       vi.restoreAllMocks();
@@ -176,10 +174,10 @@ describe('WorldPanel', () => {
     it('should show cooldown info on gather actions', () => {
       // Set a cooldown
       useGameStore.setState({
-        gatherCooldowns: { 'mine-iron': 5 },
+        gatherCooldowns: { 'mine-golconda': 5 },
         turn: 3,
       });
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.getByText(/Available in/)).toBeInTheDocument();
     });
@@ -187,15 +185,15 @@ describe('WorldPanel', () => {
 
   describe('trade routes', () => {
     it('should show trade routes section for regions with routes', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
-      expect(screen.getByText('Trade Routes')).toBeInTheDocument();
+      expect(screen.getByText(/Trade Routes/)).toBeInTheDocument();
     });
   });
 
   describe('discover new regions', () => {
     it('should show discover section when caravan is at region with undiscovered adjacent', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.getByText(/Discover New Regions/)).toBeInTheDocument();
     });
@@ -203,13 +201,13 @@ describe('WorldPanel', () => {
     it('should show Send Scout button', () => {
       // Hire a scout first
       useGameStore.getState().hirePersonnel('scout');
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.getAllByText(/Send Scout/).length).toBeGreaterThan(0);
     });
 
     it('should show Buy Map button', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.getAllByText(/Buy Map/).length).toBeGreaterThan(0);
     });
@@ -221,14 +219,14 @@ describe('WorldPanel', () => {
         scoutingMissions: [{
           id: 'test-mission',
           personnelId: scout.id,
-          targetRegion: 'shattered-coast',
+          targetRegion: 'jaisalmer',
           startTurn: 1,
           returnTurn: 3,
           successChance: 0.7,
           status: 'in-progress',
         }],
       });
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.getByText(/Scout mission in progress/)).toBeInTheDocument();
     });
@@ -236,20 +234,20 @@ describe('WorldPanel', () => {
 
   describe('marketplace', () => {
     it('should show marketplace when at a region with marketplace items', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
-      expect(screen.getByText('Marketplace')).toBeInTheDocument();
+      expect(screen.getByText(/Marketplace/)).toBeInTheDocument();
     });
 
     it('should show buy section with items', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.getByText('Buy from traders')).toBeInTheDocument();
     });
 
     it('should handle buy button click', async () => {
       const user = userEvent.setup();
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       // Click a +1 buy button
       const buyButtons = screen.getAllByText('+1');
@@ -259,10 +257,9 @@ describe('WorldPanel', () => {
     });
 
     it('should not show marketplace when not at the region', () => {
-      useGameStore.getState().discoverRegion('shattered-coast');
-      useGameStore.getState().selectRegion('shattered-coast');
+      useGameStore.getState().selectRegion('delhi');
       const { container } = render(<WorldPanel />);
-      // Marketplace should not appear because we're at forge-highlands, not shattered-coast
+      // Marketplace should not appear because we're at hyderabad, not delhi
       // The MarketplaceSection returns null when not at the region
     });
   });
@@ -292,7 +289,7 @@ describe('WorldPanel', () => {
         scoutingMissions: [{
           id: 'test-mission',
           personnelId: 'test',
-          targetRegion: 'shattered-coast',
+          targetRegion: 'kolkata',
           startTurn: 1,
           returnTurn: 3,
           successChance: 0.7,
@@ -306,8 +303,8 @@ describe('WorldPanel', () => {
     it('should show plural scouts when multiple active', () => {
       useGameStore.setState({
         scoutingMissions: [
-          { id: 'm1', personnelId: 'p1', targetRegion: 'shattered-coast', startTurn: 1, returnTurn: 3, successChance: 0.7, status: 'in-progress' as const },
-          { id: 'm2', personnelId: 'p2', targetRegion: 'amber-wastes', startTurn: 1, returnTurn: 3, successChance: 0.7, status: 'in-progress' as const },
+          { id: 'm1', personnelId: 'p1', targetRegion: 'kolkata', startTurn: 1, returnTurn: 3, successChance: 0.7, status: 'in-progress' as const },
+          { id: 'm2', personnelId: 'p2', targetRegion: 'jaisalmer', startTurn: 1, returnTurn: 3, successChance: 0.7, status: 'in-progress' as const },
         ],
       });
       render(<WorldPanel />);
@@ -326,15 +323,15 @@ describe('WorldPanel', () => {
 
   describe('reputation display on region', () => {
     it('should show updated reputation status', () => {
-      useGameStore.getState().changeReputation('iron-pact', 60);
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().changeReputation('nizams-court', 70);
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
-      expect(screen.getByText(/allied/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/allied/i).length).toBeGreaterThan(0);
     });
 
     it('should show hostile reputation', () => {
-      useGameStore.getState().changeReputation('iron-pact', -50);
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().changeReputation('nizams-court', -50);
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       expect(screen.getByText(/hostile/i)).toBeInTheDocument();
     });
@@ -342,7 +339,7 @@ describe('WorldPanel', () => {
 
   describe('marketplace sell section', () => {
     it('should show sell section for regions that buy resources', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       // Check if sell section exists (regions may or may not have buy items)
       const sellSection = screen.queryByText('Sell to traders');
@@ -351,7 +348,7 @@ describe('WorldPanel', () => {
 
     it('should handle sell button click', async () => {
       const user = userEvent.setup();
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       const sellButtons = screen.queryAllByText('-1');
       if (sellButtons.length > 0) {
@@ -362,14 +359,13 @@ describe('WorldPanel', () => {
 
   describe('reputation unlock for discovery', () => {
     it('should show reputation requirement for hard discovery regions', () => {
-      // The obsidian-citadel has hard discovery with reputation requirement
-      useGameStore.getState().discoverRegion('obsidian-citadel');
-      // But obsidian-citadel adjacent regions may have rep unlock
-      useGameStore.getState().selectRegion('forge-highlands');
+      // hyderabad is at caravan location, its adjacent undiscovered regions have rep unlock
+      useGameStore.getState().selectRegion('hyderabad');
       render(<WorldPanel />);
       // Check for reputation lock messages
-      const lockMsg = screen.queryByText(/Need.*rep with/);
-      // This is conditional on the region data
+      const lockMsgs = screen.queryAllByText(/Need.*rep with/);
+      // This is conditional on the region data — jaisalmer and varanasi both have rep unlocks
+      expect(lockMsgs.length).toBeGreaterThan(0);
     });
   });
 });

@@ -17,7 +17,7 @@ describe('Store Integration — Edge Case Pathways', () => {
   describe('EC1: Exact-zero gold after purchase', () => {
     it('should allow purchase that leaves exactly 0 gold', () => {
       const state = useGameStore.getState();
-      // Start at obsidian-citadel. Find a sell item that is NOT gold
+      // Start at hyderabad. Find a sell item that is NOT gold
       // (buying gold with gold causes a spread overwrite edge case)
       const region = state.regions[state.caravan.currentRegion];
       const sellItem = region.marketplace.find((m) => m.action === 'sell' && m.resourceType !== 'gold');
@@ -85,20 +85,20 @@ describe('Store Integration — Edge Case Pathways', () => {
   // ============================================================
   describe('EC3: Travel to undiscovered region via store', () => {
     it('should reject travel to undiscovered region', () => {
-      const result = useGameStore.getState().travelTo('amber-wastes');
+      const result = useGameStore.getState().travelTo('jaisalmer');
       expect(result.success).toBe(false);
       expect(result.message).toContain('not yet discovered');
     });
 
     it('should succeed travel to discovered adjacent region', () => {
-      const result = useGameStore.getState().travelTo('forge-highlands');
+      const result = useGameStore.getState().travelTo('delhi');
       expect(result.success).toBe(true);
-      expect(useGameStore.getState().caravan.currentRegion).toBe('forge-highlands');
+      expect(useGameStore.getState().caravan.currentRegion).toBe('delhi');
     });
 
     it('should deduct fuel on travel', () => {
       const fuelBefore = useGameStore.getState().resources.fuel;
-      useGameStore.getState().travelTo('forge-highlands');
+      useGameStore.getState().travelTo('delhi');
       const fuelAfter = useGameStore.getState().resources.fuel;
       expect(fuelAfter).toBeLessThan(fuelBefore);
     });
@@ -107,7 +107,7 @@ describe('Store Integration — Edge Case Pathways', () => {
       useGameStore.setState({
         resources: { ...useGameStore.getState().resources, fuel: 0 },
       });
-      const result = useGameStore.getState().travelTo('forge-highlands');
+      const result = useGameStore.getState().travelTo('delhi');
       expect(result.success).toBe(false);
       expect(result.message).toContain('fuel');
     });
@@ -118,24 +118,24 @@ describe('Store Integration — Edge Case Pathways', () => {
   // ============================================================
   describe('EC4: Scout edge cases via store', () => {
     it('should fail scouting with no personnel', () => {
-      const result = useGameStore.getState().sendScout('amber-wastes');
+      const result = useGameStore.getState().sendScout('jaisalmer');
       expect(result.success).toBe(false);
     });
 
     it('should succeed scouting with a hired scout', () => {
       useGameStore.getState().hirePersonnel('scout');
-      const result = useGameStore.getState().sendScout('amber-wastes');
+      const result = useGameStore.getState().sendScout('jaisalmer');
       expect(result.success).toBe(true);
       expect(useGameStore.getState().scoutingMissions.length).toBe(1);
     });
 
     it('should fail second scout mission when only scout is already scouting', () => {
       useGameStore.getState().hirePersonnel('scout');
-      useGameStore.getState().sendScout('amber-wastes');
+      useGameStore.getState().sendScout('jaisalmer');
       // Try scouting another adjacent undiscovered region
-      // From obsidian-citadel, emerald-canopy is adjacent and undiscovered
-      const result = useGameStore.getState().sendScout('emerald-canopy');
-      // This may fail if emerald-canopy isn't adjacent to obsidian-citadel or if scout is busy
+      // From hyderabad, varanasi is adjacent and undiscovered
+      const result = useGameStore.getState().sendScout('varanasi');
+      // This may fail if varanasi isn't adjacent to hyderabad or if scout is busy
       if (useGameStore.getState().personnel.filter((p) => p.role === 'scout' && p.status === 'available').length === 0) {
         expect(result.success).toBe(false);
       }
@@ -145,7 +145,7 @@ describe('Store Integration — Edge Case Pathways', () => {
       const goldBefore = useGameStore.getState().resources.gold;
       useGameStore.getState().hirePersonnel('scout');
       const goldAfterHire = useGameStore.getState().resources.gold;
-      useGameStore.getState().sendScout('amber-wastes');
+      useGameStore.getState().sendScout('jaisalmer');
       const goldAfterScout = useGameStore.getState().resources.gold;
       expect(goldAfterScout).toBeLessThan(goldAfterHire);
     });
@@ -156,10 +156,10 @@ describe('Store Integration — Edge Case Pathways', () => {
   // ============================================================
   describe('EC5: Double-discover via store', () => {
     it('should be idempotent when discovering same region twice', () => {
-      useGameStore.getState().discoverRegion('amber-wastes');
-      expect(useGameStore.getState().regions['amber-wastes'].discovered).toBe(true);
-      useGameStore.getState().discoverRegion('amber-wastes');
-      expect(useGameStore.getState().regions['amber-wastes'].discovered).toBe(true);
+      useGameStore.getState().discoverRegion('jaisalmer');
+      expect(useGameStore.getState().regions['jaisalmer'].discovered).toBe(true);
+      useGameStore.getState().discoverRegion('jaisalmer');
+      expect(useGameStore.getState().regions['jaisalmer'].discovered).toBe(true);
     });
   });
 
@@ -182,13 +182,15 @@ describe('Store Integration — Edge Case Pathways', () => {
     });
 
     it('should stay playing when at least one critical resource is positive', () => {
+      // After base income (gold:5, food:2, fuel:3, water:2) and caravan upkeep (food:3, water:2),
+      // game over triggers if ANY TWO vital resources <= 0.
+      // Set resources so that after income/upkeep, at most one vital is zero.
       useGameStore.setState({
         resources: {
-          fuel: 1, water: 0, food: 0, gold: 0, contraband: 0, information: 0,
+          fuel: 10, water: 10, food: 10, gold: 10, contraband: 0, information: 0,
         },
       });
       useGameStore.getState().advanceTurn();
-      // Base income adds fuel: 3, so we'd have 4 fuel
       expect(useGameStore.getState().phase).toBe('playing');
     });
   });
@@ -226,7 +228,7 @@ describe('Store Integration — Edge Case Pathways', () => {
     });
 
     it('should reset selectedRegion on load', () => {
-      useGameStore.getState().selectRegion('forge-highlands');
+      useGameStore.getState().selectRegion('delhi');
       const saveData = useGameStore.getState().getSaveData();
       useGameStore.getState().loadSaveData(saveData);
       expect(useGameStore.getState().selectedRegion).toBeNull();
@@ -237,7 +239,7 @@ describe('Store Integration — Edge Case Pathways', () => {
         phase: 'playing',
         turn: 10,
         resources: { fuel: 50, water: 50, food: 50, gold: 200, contraband: 0, information: 0 },
-        reputation: { 'iron-pact': 10, 'tidecallers': 5, 'dustwalkers': 0, 'verdant-commune': 0, 'nightmarket-syndicate': 0, 'ashen-throne': 0 },
+        reputation: { 'mughal-court': 10, 'east-india-company': 5, 'rajput-clans': 0, 'brahmin-council': 0, 'nightmarket-syndicate': 0, 'nizams-court': 0 },
         regions: {},
         tradeRoutes: [],
         personnel: [],
@@ -257,14 +259,14 @@ describe('Store Integration — Edge Case Pathways', () => {
   // ============================================================
   describe('EC8: Buy/sell at wrong location', () => {
     it('should reject buying at a region you are not in', () => {
-      // Start at obsidian-citadel, try to buy from forge-highlands
-      const result = useGameStore.getState().buyResource('forge-highlands', 'fuel', 1);
+      // Start at hyderabad, try to buy from delhi
+      const result = useGameStore.getState().buyResource('delhi', 'fuel', 1);
       expect(result.success).toBe(false);
       expect(result.message).toContain('must be at this location');
     });
 
     it('should reject selling at a region you are not in', () => {
-      const result = useGameStore.getState().sellResource('forge-highlands', 'fuel', 1);
+      const result = useGameStore.getState().sellResource('delhi', 'fuel', 1);
       expect(result.success).toBe(false);
       expect(result.message).toContain('must be at this location');
     });
@@ -329,17 +331,17 @@ describe('Store Integration — Edge Case Pathways', () => {
   // ============================================================
   describe('EC10: Establish route via store', () => {
     it('should fail when reputation not met', () => {
-      const result = useGameStore.getState().establishRoute('route-forge-coast');
+      const result = useGameStore.getState().establishRoute('route-delhi-kolkata');
       expect(result).toBe(false);
     });
 
     it('should succeed when all conditions met', () => {
-      // Give enough reputation for route-forge-coast (iron-pact + tidecallers >= 10)
-      useGameStore.getState().changeReputation('iron-pact', 15);
-      useGameStore.getState().changeReputation('tidecallers', 15);
-      const result = useGameStore.getState().establishRoute('route-forge-coast');
+      // Give enough reputation for route-delhi-kolkata (mughal-court + east-india-company >= 10)
+      useGameStore.getState().changeReputation('mughal-court', 15);
+      useGameStore.getState().changeReputation('east-india-company', 15);
+      const result = useGameStore.getState().establishRoute('route-delhi-kolkata');
       expect(result).toBe(true);
-      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-forge-coast');
+      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-delhi-kolkata');
       expect(route?.established).toBe(true);
     });
 
@@ -349,10 +351,10 @@ describe('Store Integration — Edge Case Pathways', () => {
     });
 
     it('should deduct resources on route establishment', () => {
-      useGameStore.getState().changeReputation('iron-pact', 15);
-      useGameStore.getState().changeReputation('tidecallers', 15);
+      useGameStore.getState().changeReputation('mughal-court', 15);
+      useGameStore.getState().changeReputation('east-india-company', 15);
       const goldBefore = useGameStore.getState().resources.gold;
-      useGameStore.getState().establishRoute('route-forge-coast');
+      useGameStore.getState().establishRoute('route-delhi-kolkata');
       const goldAfter = useGameStore.getState().resources.gold;
       expect(goldAfter).toBeLessThan(goldBefore);
     });
@@ -473,25 +475,25 @@ describe('Store Integration — Edge Case Pathways', () => {
   // ============================================================
   describe('EC14: Reputation clamping via store', () => {
     it('should clamp at +100', () => {
-      useGameStore.getState().changeReputation('iron-pact', 200);
-      expect(useGameStore.getState().reputation['iron-pact']).toBe(100);
+      useGameStore.getState().changeReputation('mughal-court', 200);
+      expect(useGameStore.getState().reputation['mughal-court']).toBe(100);
     });
 
     it('should clamp at -100', () => {
-      useGameStore.getState().changeReputation('iron-pact', -200);
-      expect(useGameStore.getState().reputation['iron-pact']).toBe(-100);
+      useGameStore.getState().changeReputation('mughal-court', -200);
+      expect(useGameStore.getState().reputation['mughal-court']).toBe(-100);
     });
 
     it('should accumulate correctly within bounds', () => {
-      useGameStore.getState().changeReputation('iron-pact', 30);
-      useGameStore.getState().changeReputation('iron-pact', 20);
-      expect(useGameStore.getState().reputation['iron-pact']).toBe(50);
+      useGameStore.getState().changeReputation('mughal-court', 30);
+      useGameStore.getState().changeReputation('mughal-court', 20);
+      expect(useGameStore.getState().reputation['mughal-court']).toBe(50);
     });
 
     it('should not affect other factions', () => {
-      useGameStore.getState().changeReputation('iron-pact', 50);
-      expect(useGameStore.getState().reputation['tidecallers']).toBe(0);
-      expect(useGameStore.getState().reputation['dustwalkers']).toBe(0);
+      useGameStore.getState().changeReputation('mughal-court', 50);
+      expect(useGameStore.getState().reputation['east-india-company']).toBe(0);
+      expect(useGameStore.getState().reputation['rajput-clans']).toBe(0);
     });
   });
 

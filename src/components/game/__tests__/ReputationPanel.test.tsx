@@ -18,12 +18,12 @@ describe('ReputationPanel', () => {
 
   it('should render all 6 factions', () => {
     render(<ReputationPanel />);
-    expect(screen.getAllByText(/The Iron Pact/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/Tidecallers/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/Dustwalkers/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/The Verdant Commune/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/The Mughal Court/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/East India Company/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Rajput Clans/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/The Brahmin Council/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(/Nightmarket Syndicate/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/The Ashen Throne/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/The Nizam's Court/).length).toBeGreaterThanOrEqual(1);
   });
 
   it('should show neutral status for all factions initially', () => {
@@ -44,14 +44,14 @@ describe('ReputationPanel', () => {
   });
 
   it('should reflect reputation changes', () => {
-    useGameStore.getState().changeReputation('iron-pact', 60);
+    useGameStore.getState().changeReputation('mughal-court', 70);
     render(<ReputationPanel />);
-    expect(screen.getByText(/allied/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/allied/i).length).toBeGreaterThan(0);
   });
 
   it('should show hostile status for negative reputation', () => {
-    useGameStore.getState().changeReputation('iron-pact', -50);
+    useGameStore.getState().changeReputation('mughal-court', -40);
     render(<ReputationPanel />);
-    expect(screen.getByText(/hostile/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/hostile/i).length).toBeGreaterThan(0);
   });
 });

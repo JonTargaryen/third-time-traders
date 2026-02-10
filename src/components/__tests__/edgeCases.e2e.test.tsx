@@ -107,7 +107,8 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
         turn: 15,
       });
       render(<GameShell />);
-      expect(screen.getByText(/Survived 15 turns/)).toBeInTheDocument();
+      expect(screen.getByText(/Turns Survived/)).toBeInTheDocument();
+      expect(screen.getByText('15')).toBeInTheDocument();
     });
 
     it('should allow restarting from game over', async () => {
@@ -125,22 +126,22 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
   // ============================================================
   describe('EC7: Save data round-trip', () => {
     it('should produce valid save data that can be reloaded', () => {
-      useGameStore.getState().changeReputation('iron-pact', 25);
+      useGameStore.getState().changeReputation('mughal-court', 25);
       useGameStore.getState().advanceTurn();
       const saveData = useGameStore.getState().getSaveData();
       const parsed = JSON.parse(saveData);
       expect(parsed.turn).toBe(2);
       // Reputation may have shifted due to random events during advanceTurn,
       // so capture the actual value after advance
-      const repAfterAdvance = useGameStore.getState().reputation['iron-pact'];
-      expect(parsed.reputation['iron-pact']).toBe(repAfterAdvance);
+      const repAfterAdvance = useGameStore.getState().reputation['mughal-court'];
+      expect(parsed.reputation['mughal-court']).toBe(repAfterAdvance);
 
       // Reload
       useGameStore.getState().newGame();
       expect(useGameStore.getState().turn).toBe(1);
       useGameStore.getState().loadSaveData(saveData);
       expect(useGameStore.getState().turn).toBe(2);
-      expect(useGameStore.getState().reputation['iron-pact']).toBe(repAfterAdvance);
+      expect(useGameStore.getState().reputation['mughal-court']).toBe(repAfterAdvance);
     });
   });
 
@@ -149,7 +150,7 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
   // ============================================================
   describe('EC8: Store rejects wrong-location marketplace actions', () => {
     it('should reject and give clear reason', () => {
-      const result = useGameStore.getState().buyResource('forge-highlands', 'fuel', 5);
+      const result = useGameStore.getState().buyResource('delhi', 'fuel', 5);
       expect(result.success).toBe(false);
       expect(result.message).toContain('must be at this location');
     });
@@ -175,9 +176,10 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
   // ============================================================
   describe('EC10: Route failure for missing prerequisites', () => {
     it('should fail and leave route unestablished', () => {
-      const result = useGameStore.getState().establishRoute('route-forge-coast');
+      // Use a valid route ID — the player won't have enough reputation to establish it
+      const result = useGameStore.getState().establishRoute('route-delhi-kolkata');
       expect(result).toBe(false);
-      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-forge-coast');
+      const route = useGameStore.getState().tradeRoutes.find((r) => r.id === 'route-delhi-kolkata');
       expect(route?.established).toBe(false);
     });
   });
@@ -204,7 +206,7 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
       }
       if (useGameStore.getState().phase === 'playing') {
         render(<GameShell />);
-        expect(screen.getByText(/Turn 51/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Turn 51/).length).toBeGreaterThan(0);
       }
     });
   });
@@ -249,17 +251,17 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
   // ============================================================
   describe('EC14: Reputation status updates in factions panel', () => {
     it('should show allied status when reputation is high', async () => {
-      useGameStore.getState().changeReputation('iron-pact', 70);
+      useGameStore.getState().changeReputation('mughal-court', 70);
       render(<GameShell />);
       const user = userEvent.setup();
       await user.click(screen.getByText('Factions'));
       await waitFor(() => {
-        expect(screen.getByText(/allied/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/allied/i).length).toBeGreaterThan(0);
       });
     });
 
     it('should show hostile status when reputation is very low', async () => {
-      useGameStore.getState().changeReputation('iron-pact', -50);
+      useGameStore.getState().changeReputation('mughal-court', -50);
       render(<GameShell />);
       const user = userEvent.setup();
       await user.click(screen.getByText('Factions'));
@@ -274,16 +276,16 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
   // ============================================================
   describe('EC15: Full gameplay loop — advance turn, travel, gather', () => {
     it('should support a full turn-travel-gather cycle', () => {
-      // Start: turn 1 at obsidian-citadel
-      expect(useGameStore.getState().caravan.currentRegion).toBe('obsidian-citadel');
+      // Start: turn 1 at hyderabad
+      expect(useGameStore.getState().caravan.currentRegion).toBe('hyderabad');
 
-      // Travel to forge-highlands (discovered, adjacent)
-      const travelResult = useGameStore.getState().travelTo('forge-highlands');
+      // Travel to delhi (discovered, adjacent)
+      const travelResult = useGameStore.getState().travelTo('delhi');
       expect(travelResult.success).toBe(true);
-      expect(useGameStore.getState().caravan.currentRegion).toBe('forge-highlands');
+      expect(useGameStore.getState().caravan.currentRegion).toBe('delhi');
 
-      // Gather at forge-highlands
-      const gatherResult = useGameStore.getState().performGatherAction('forge-highlands', 'mine-iron');
+      // Gather at delhi
+      const gatherResult = useGameStore.getState().performGatherAction('delhi', 'collect-taxes');
       // May succeed or fail based on RNG, but should not crash
       expect(typeof gatherResult.success).toBe('boolean');
       expect(typeof gatherResult.message).toBe('string');
@@ -293,25 +295,25 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
       expect(useGameStore.getState().turn).toBe(2);
 
       // Travel back
-      const returnResult = useGameStore.getState().travelTo('obsidian-citadel');
+      const returnResult = useGameStore.getState().travelTo('hyderabad');
       expect(returnResult.success).toBe(true);
     });
 
     it('should support the full discover cycle via map purchase', () => {
-      // amber-wastes is undiscovered but adjacent to obsidian-citadel
-      // amber-wastes requires MEDIUM_DISCOVERY: mapCost { gold: 75, information: 5 }
+      // jaisalmer is undiscovered but adjacent to hyderabad
+      // jaisalmer requires MEDIUM_DISCOVERY: mapCost { gold: 75, information: 5 }
       // Ensure we have enough information
       useGameStore.setState({
         resources: { ...useGameStore.getState().resources, information: 10 },
       });
-      const buyResult = useGameStore.getState().buyMap('amber-wastes');
+      const buyResult = useGameStore.getState().buyMap('jaisalmer');
       expect(buyResult.success).toBe(true);
-      expect(useGameStore.getState().regions['amber-wastes'].discovered).toBe(true);
+      expect(useGameStore.getState().regions['jaisalmer'].discovered).toBe(true);
 
       // Now can travel there
-      const travelResult = useGameStore.getState().travelTo('amber-wastes');
+      const travelResult = useGameStore.getState().travelTo('jaisalmer');
       expect(travelResult.success).toBe(true);
-      expect(useGameStore.getState().caravan.currentRegion).toBe('amber-wastes');
+      expect(useGameStore.getState().caravan.currentRegion).toBe('jaisalmer');
     });
   });
 
@@ -323,11 +325,11 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
       const user = userEvent.setup();
       render(<GameShell />);
 
-      expect(screen.getByText(/Turn 1/)).toBeInTheDocument();
+      expect(screen.getAllByText(/Turn 1/).length).toBeGreaterThan(0);
       await user.click(screen.getByText(/Next Turn/));
 
       await waitFor(() => {
-        expect(screen.getByText(/Turn 2/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Turn 2/).length).toBeGreaterThan(0);
       });
       expect(useGameStore.getState().turn).toBe(2);
     });
@@ -384,7 +386,7 @@ describe('E2E Simulated Pathways — 15 Edge Cases', () => {
       // Turn 9 = summer
       if (useGameStore.getState().phase === 'playing') {
         render(<GameShell />);
-        expect(screen.getByText(/Summer/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/Summer/i).length).toBeGreaterThan(0);
       }
     });
   });

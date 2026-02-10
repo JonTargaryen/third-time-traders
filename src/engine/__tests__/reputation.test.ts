@@ -56,39 +56,39 @@ describe('Reputation Engine', () => {
   describe('changeReputation', () => {
     it('should increase reputation', () => {
       const rep = createStartingReputation();
-      const result = changeReputation(rep, 'iron-pact', 25);
-      expect(result['iron-pact']).toBe(25);
+      const result = changeReputation(rep, 'mughal-court', 25);
+      expect(result['mughal-court']).toBe(25);
     });
 
     it('should decrease reputation', () => {
       const rep = createStartingReputation();
-      const result = changeReputation(rep, 'iron-pact', -15);
-      expect(result['iron-pact']).toBe(-15);
+      const result = changeReputation(rep, 'mughal-court', -15);
+      expect(result['mughal-court']).toBe(-15);
     });
 
     it('should clamp at max', () => {
       const rep = createStartingReputation();
-      const result = changeReputation(rep, 'iron-pact', 200);
-      expect(result['iron-pact']).toBe(REPUTATION_MAX);
+      const result = changeReputation(rep, 'mughal-court', 200);
+      expect(result['mughal-court']).toBe(REPUTATION_MAX);
     });
 
     it('should clamp at min', () => {
       const rep = createStartingReputation();
-      const result = changeReputation(rep, 'iron-pact', -200);
-      expect(result['iron-pact']).toBe(REPUTATION_MIN);
+      const result = changeReputation(rep, 'mughal-court', -200);
+      expect(result['mughal-court']).toBe(REPUTATION_MIN);
     });
 
     it('should not mutate original', () => {
       const rep = createStartingReputation();
-      changeReputation(rep, 'iron-pact', 50);
-      expect(rep['iron-pact']).toBe(0);
+      changeReputation(rep, 'mughal-court', 50);
+      expect(rep['mughal-court']).toBe(0);
     });
 
     it('should only change the specified faction', () => {
       const rep = createStartingReputation();
-      const result = changeReputation(rep, 'iron-pact', 50);
-      expect(result['tidecallers']).toBe(0);
-      expect(result['dustwalkers']).toBe(0);
+      const result = changeReputation(rep, 'mughal-court', 50);
+      expect(result['east-india-company']).toBe(0);
+      expect(result['rajput-clans']).toBe(0);
     });
   });
 
@@ -96,12 +96,12 @@ describe('Reputation Engine', () => {
     it('should change multiple factions at once', () => {
       const rep = createStartingReputation();
       const result = changeMultipleReputations(rep, {
-        'iron-pact': 20,
-        'tidecallers': -10,
+        'mughal-court': 20,
+        'east-india-company': -10,
       });
-      expect(result['iron-pact']).toBe(20);
-      expect(result['tidecallers']).toBe(-10);
-      expect(result['dustwalkers']).toBe(0);
+      expect(result['mughal-court']).toBe(20);
+      expect(result['east-india-company']).toBe(-10);
+      expect(result['rajput-clans']).toBe(0);
     });
 
     it('should handle empty changes', () => {
@@ -113,32 +113,32 @@ describe('Reputation Engine', () => {
     it('should skip entries with undefined delta values', () => {
       const rep = createStartingReputation();
       const changes: Partial<Record<FactionId, number>> = {
-        'iron-pact': 20,
-        'tidecallers': undefined,
+        'mughal-court': 20,
+        'east-india-company': undefined,
       };
       const result = changeMultipleReputations(rep, changes);
-      expect(result['iron-pact']).toBe(20);
-      expect(result['tidecallers']).toBe(0); // unchanged
+      expect(result['mughal-court']).toBe(20);
+      expect(result['east-india-company']).toBe(0); // unchanged
     });
   });
 
   describe('isFactionHostile', () => {
     it('should return true when below hostility threshold', () => {
-      // Iron Pact threshold is -30
+      // Mughal Court threshold is -30
       const rep = createStartingReputation();
-      const hostile = changeReputation(rep, 'iron-pact', -50);
-      expect(isFactionHostile(hostile, 'iron-pact')).toBe(true);
+      const hostile = changeReputation(rep, 'mughal-court', -50);
+      expect(isFactionHostile(hostile, 'mughal-court')).toBe(true);
     });
 
     it('should return false when at threshold', () => {
       const rep = createStartingReputation();
-      const atThreshold = changeReputation(rep, 'iron-pact', -30);
-      expect(isFactionHostile(atThreshold, 'iron-pact')).toBe(false);
+      const atThreshold = changeReputation(rep, 'mughal-court', -30);
+      expect(isFactionHostile(atThreshold, 'mughal-court')).toBe(false);
     });
 
     it('should return false when above threshold', () => {
       const rep = createStartingReputation();
-      expect(isFactionHostile(rep, 'iron-pact')).toBe(false);
+      expect(isFactionHostile(rep, 'mughal-court')).toBe(false);
     });
 
     it('should return false for unknown faction', () => {
@@ -149,16 +149,16 @@ describe('Reputation Engine', () => {
 
   describe('isFactionAllied', () => {
     it('should return true when at or above ally threshold', () => {
-      // Iron Pact ally threshold is 60
+      // Mughal Court ally threshold is 65
       const rep = createStartingReputation();
-      const allied = changeReputation(rep, 'iron-pact', 60);
-      expect(isFactionAllied(allied, 'iron-pact')).toBe(true);
+      const allied = changeReputation(rep, 'mughal-court', 65);
+      expect(isFactionAllied(allied, 'mughal-court')).toBe(true);
     });
 
     it('should return false when below ally threshold', () => {
       const rep = createStartingReputation();
-      const notAllied = changeReputation(rep, 'iron-pact', 59);
-      expect(isFactionAllied(notAllied, 'iron-pact')).toBe(false);
+      const notAllied = changeReputation(rep, 'mughal-court', 64);
+      expect(isFactionAllied(notAllied, 'mughal-court')).toBe(false);
     });
 
     it('should return false for unknown faction', () => {
@@ -172,29 +172,29 @@ describe('Reputation Engine', () => {
     beforeEach(() => { rep = createStartingReputation(); });
 
     it('should return hostile when below hostility threshold', () => {
-      const r = changeReputation(rep, 'iron-pact', -50);
-      expect(getRelationshipStatus(r, 'iron-pact')).toBe('hostile');
+      const r = changeReputation(rep, 'mughal-court', -50);
+      expect(getRelationshipStatus(r, 'mughal-court')).toBe('hostile');
     });
 
     it('should return allied when at or above ally threshold', () => {
-      const r = changeReputation(rep, 'iron-pact', 60);
-      expect(getRelationshipStatus(r, 'iron-pact')).toBe('allied');
+      const r = changeReputation(rep, 'mughal-court', 65);
+      expect(getRelationshipStatus(r, 'mughal-court')).toBe('allied');
     });
 
     it('should return unfriendly when below -10 but not hostile', () => {
-      const r = changeReputation(rep, 'iron-pact', -15);
-      expect(getRelationshipStatus(r, 'iron-pact')).toBe('unfriendly');
+      const r = changeReputation(rep, 'mughal-court', -15);
+      expect(getRelationshipStatus(r, 'mughal-court')).toBe('unfriendly');
     });
 
     it('should return friendly when >= 30 but not allied', () => {
-      const r = changeReputation(rep, 'iron-pact', 40);
-      expect(getRelationshipStatus(r, 'iron-pact')).toBe('friendly');
+      const r = changeReputation(rep, 'mughal-court', 40);
+      expect(getRelationshipStatus(r, 'mughal-court')).toBe('friendly');
     });
 
     it('should return neutral for values between -10 and 30', () => {
-      expect(getRelationshipStatus(rep, 'iron-pact')).toBe('neutral');
-      const r = changeReputation(rep, 'iron-pact', 15);
-      expect(getRelationshipStatus(r, 'iron-pact')).toBe('neutral');
+      expect(getRelationshipStatus(rep, 'mughal-court')).toBe('neutral');
+      const r = changeReputation(rep, 'mughal-court', 15);
+      expect(getRelationshipStatus(r, 'mughal-court')).toBe('neutral');
     });
   });
 
@@ -206,11 +206,11 @@ describe('Reputation Engine', () => {
 
     it('should return hostile factions', () => {
       let rep = createStartingReputation();
-      rep = changeReputation(rep, 'iron-pact', -50);
-      rep = changeReputation(rep, 'dustwalkers', -50);
+      rep = changeReputation(rep, 'mughal-court', -50);
+      rep = changeReputation(rep, 'rajput-clans', -50);
       const hostile = getHostileFactions(rep);
-      expect(hostile).toContain('iron-pact');
-      expect(hostile).toContain('dustwalkers');
+      expect(hostile).toContain('mughal-court');
+      expect(hostile).toContain('rajput-clans');
       expect(hostile.length).toBe(2);
     });
   });
@@ -232,18 +232,18 @@ describe('Reputation Engine', () => {
   describe('meetsReputationRequirements', () => {
     it('should return true when all requirements are met', () => {
       let rep = createStartingReputation();
-      rep = changeReputation(rep, 'iron-pact', 20);
-      rep = changeReputation(rep, 'tidecallers', 15);
+      rep = changeReputation(rep, 'mughal-court', 20);
+      rep = changeReputation(rep, 'east-india-company', 15);
       expect(meetsReputationRequirements(rep, [
-        { factionId: 'iron-pact', minimum: 10 },
-        { factionId: 'tidecallers', minimum: 10 },
+        { factionId: 'mughal-court', minimum: 10 },
+        { factionId: 'east-india-company', minimum: 10 },
       ])).toBe(true);
     });
 
     it('should return false when any requirement is not met', () => {
       const rep = createStartingReputation();
       expect(meetsReputationRequirements(rep, [
-        { factionId: 'iron-pact', minimum: 10 },
+        { factionId: 'mughal-court', minimum: 10 },
       ])).toBe(false);
     });
 
@@ -254,9 +254,9 @@ describe('Reputation Engine', () => {
 
     it('should handle exact threshold', () => {
       let rep = createStartingReputation();
-      rep = changeReputation(rep, 'iron-pact', 10);
+      rep = changeReputation(rep, 'mughal-court', 10);
       expect(meetsReputationRequirements(rep, [
-        { factionId: 'iron-pact', minimum: 10 },
+        { factionId: 'mughal-court', minimum: 10 },
       ])).toBe(true);
     });
   });

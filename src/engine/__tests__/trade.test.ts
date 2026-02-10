@@ -19,13 +19,13 @@ import type { TradeRoute, Resources, ReputationMap } from '@/engine/types';
 // A test route between two discovered regions
 const testRoute: TradeRoute = {
   id: 'test-route',
-  from: 'forge-highlands', // discovered=true
-  to: 'shattered-coast',   // discovered=true
+  from: 'delhi', // discovered=true
+  to: 'kolkata',   // discovered=true
   established: false,
   costToEstablish: { gold: 100, fuel: 20 },
   requiredReputation: [
-    { factionId: 'iron-pact', minimum: 10 },
-    { factionId: 'tidecallers', minimum: 10 },
+    { factionId: 'mughal-court', minimum: 10 },
+    { factionId: 'east-india-company', minimum: 10 },
   ],
   profitPerTurn: { gold: 15, food: 5 },
 };
@@ -33,8 +33,8 @@ const testRoute: TradeRoute = {
 // A test route involving an undiscovered region
 const undiscoveredRoute: TradeRoute = {
   id: 'undiscovered-route',
-  from: 'forge-highlands',
-  to: 'amber-wastes', // discovered=false in default data
+  from: 'delhi',
+  to: 'jaisalmer', // discovered=false in default data
   established: false,
   costToEstablish: { gold: 50 },
   requiredReputation: [],
@@ -52,8 +52,8 @@ describe('Trade Engine', () => {
 
   describe('canEstablishRoute', () => {
     it('should allow establishment when all conditions met', () => {
-      let rep = changeReputation(reputation, 'iron-pact', 15);
-      rep = changeReputation(rep, 'tidecallers', 15);
+      let rep = changeReputation(reputation, 'mughal-court', 15);
+      rep = changeReputation(rep, 'east-india-company', 15);
       const result = canEstablishRoute(testRoute, resources, rep);
       expect(result.canEstablish).toBe(true);
       expect(result.reasons).toEqual([]);
@@ -61,8 +61,8 @@ describe('Trade Engine', () => {
 
     it('should fail when already established', () => {
       const established = { ...testRoute, established: true };
-      let rep = changeReputation(reputation, 'iron-pact', 15);
-      rep = changeReputation(rep, 'tidecallers', 15);
+      let rep = changeReputation(reputation, 'mughal-court', 15);
+      rep = changeReputation(rep, 'east-india-company', 15);
       const result = canEstablishRoute(established, resources, rep);
       expect(result.canEstablish).toBe(false);
       expect(result.reasons).toContain('Route is already established');
@@ -70,8 +70,8 @@ describe('Trade Engine', () => {
 
     it('should fail when insufficient resources', () => {
       const poorResources = createEmptyResources();
-      let rep = changeReputation(reputation, 'iron-pact', 15);
-      rep = changeReputation(rep, 'tidecallers', 15);
+      let rep = changeReputation(reputation, 'mughal-court', 15);
+      rep = changeReputation(rep, 'east-india-company', 15);
       const result = canEstablishRoute(testRoute, poorResources, rep);
       expect(result.canEstablish).toBe(false);
       expect(result.reasons).toContain('Insufficient resources');
@@ -97,11 +97,11 @@ describe('Trade Engine', () => {
     });
 
     it('should fail when source (from) region is undiscovered', () => {
-      // amber-wastes is undiscovered by default, use it as 'from'
+      // jaisalmer is undiscovered by default, use it as 'from'
       const sourceUndiscoveredRoute: TradeRoute = {
         id: 'src-undiscovered',
-        from: 'amber-wastes', // undiscovered
-        to: 'forge-highlands', // discovered
+        from: 'jaisalmer', // undiscovered
+        to: 'delhi', // discovered
         established: false,
         costToEstablish: { gold: 50 },
         requiredReputation: [],
@@ -109,14 +109,14 @@ describe('Trade Engine', () => {
       };
       const result = canEstablishRoute(sourceUndiscoveredRoute, resources, reputation);
       expect(result.canEstablish).toBe(false);
-      expect(result.reasons.some((r) => r.includes('Amber Wastes'))).toBe(true);
+      expect(result.reasons.some((r) => r.includes('Jaisalmer'))).toBe(true);
     });
 
     it('should fail when both regions are undiscovered', () => {
       const bothUndiscoveredRoute: TradeRoute = {
         id: 'both-undiscovered',
-        from: 'amber-wastes',
-        to: 'emerald-canopy',
+        from: 'jaisalmer',
+        to: 'varanasi',
         established: false,
         costToEstablish: { gold: 50 },
         requiredReputation: [],
@@ -146,16 +146,16 @@ describe('Trade Engine', () => {
 
   describe('establishRoute', () => {
     it('should establish route, deduct resources, and gain reputation', () => {
-      let rep = changeReputation(reputation, 'iron-pact', 15);
-      rep = changeReputation(rep, 'tidecallers', 15);
+      let rep = changeReputation(reputation, 'mughal-court', 15);
+      rep = changeReputation(rep, 'east-india-company', 15);
       const result = establishRoute(testRoute, resources, rep);
       expect(result).not.toBeNull();
       expect(result!.route.established).toBe(true);
       expect(result!.resources.gold).toBe(400); // 500 - 100
       expect(result!.resources.fuel).toBe(80);  // 100 - 20
       // +5 rep to each involved faction
-      expect(result!.reputation['iron-pact']).toBe(20); // 15 + 5
-      expect(result!.reputation['tidecallers']).toBe(20); // 15 + 5
+      expect(result!.reputation['mughal-court']).toBe(20); // 15 + 5
+      expect(result!.reputation['east-india-company']).toBe(20); // 15 + 5
     });
 
     it('should return null when conditions not met', () => {
@@ -164,8 +164,8 @@ describe('Trade Engine', () => {
     });
 
     it('should not mutate inputs', () => {
-      let rep = changeReputation(reputation, 'iron-pact', 15);
-      rep = changeReputation(rep, 'tidecallers', 15);
+      let rep = changeReputation(reputation, 'mughal-court', 15);
+      rep = changeReputation(rep, 'east-india-company', 15);
       const origGold = resources.gold;
       establishRoute(testRoute, resources, rep);
       expect(resources.gold).toBe(origGold);
@@ -209,19 +209,19 @@ describe('Trade Engine', () => {
   describe('getRoutesForRegion', () => {
     it('should return routes connected to a region', () => {
       const routes = [testRoute, undiscoveredRoute];
-      const result = getRoutesForRegion(routes, 'forge-highlands');
+      const result = getRoutesForRegion(routes, 'delhi');
       expect(result.length).toBe(2);
     });
 
     it('should return routes where region is destination', () => {
       const routes = [testRoute];
-      const result = getRoutesForRegion(routes, 'shattered-coast');
+      const result = getRoutesForRegion(routes, 'kolkata');
       expect(result.length).toBe(1);
     });
 
     it('should return empty for unconnected region', () => {
       const routes = [testRoute];
-      const result = getRoutesForRegion(routes, 'emerald-canopy');
+      const result = getRoutesForRegion(routes, 'varanasi');
       expect(result.length).toBe(0);
     });
   });
@@ -262,8 +262,8 @@ describe('Trade Engine', () => {
 
   describe('dismantleRoute', () => {
     it('should dismantle, refund 25%, and lose reputation', () => {
-      let rep = changeReputation(reputation, 'iron-pact', 30);
-      rep = changeReputation(rep, 'tidecallers', 30);
+      let rep = changeReputation(reputation, 'mughal-court', 30);
+      rep = changeReputation(rep, 'east-india-company', 30);
       const established = { ...testRoute, established: true };
       const result = dismantleRoute(established, resources, rep);
       expect(result).not.toBeNull();
@@ -272,8 +272,8 @@ describe('Trade Engine', () => {
       expect(result!.resources.gold).toBe(525);
       expect(result!.resources.fuel).toBe(105);
       // -10 rep each
-      expect(result!.reputation['iron-pact']).toBe(20);
-      expect(result!.reputation['tidecallers']).toBe(20);
+      expect(result!.reputation['mughal-court']).toBe(20);
+      expect(result!.reputation['east-india-company']).toBe(20);
     });
 
     it('should return null for unestablished route', () => {

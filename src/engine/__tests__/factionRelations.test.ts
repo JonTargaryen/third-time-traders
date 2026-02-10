@@ -16,7 +16,7 @@ import type { FactionId, FactionRelation } from '@/engine/types';
 describe('createInitialFactionRelations', () => {
   it('should create relations for all factions', () => {
     const relations = createInitialFactionRelations();
-    const factions: FactionId[] = ['iron-pact', 'tidecallers', 'dustwalkers', 'verdant-commune', 'nightmarket-syndicate', 'ashen-throne'];
+    const factions: FactionId[] = ['mughal-court', 'east-india-company', 'rajput-clans', 'brahmin-council', 'nightmarket-syndicate', 'nizams-court'];
     for (const a of factions) {
       for (const b of factions) {
         expect(relations[a][b]).toBeDefined();
@@ -26,69 +26,69 @@ describe('createInitialFactionRelations', () => {
 
   it('should have self-relations as allied', () => {
     const relations = createInitialFactionRelations();
-    expect(relations['iron-pact']['iron-pact']).toBe('allied');
-    expect(relations['tidecallers']['tidecallers']).toBe('allied');
+    expect(relations['mughal-court']['mughal-court']).toBe('allied');
+    expect(relations['rajput-clans']['rajput-clans']).toBe('allied');
   });
 
   it('should have symmetric relations', () => {
     const relations = createInitialFactionRelations();
-    expect(relations['iron-pact']['ashen-throne']).toBe(relations['ashen-throne']['iron-pact']);
-    expect(relations['nightmarket-syndicate']['dustwalkers']).toBe(relations['dustwalkers']['nightmarket-syndicate']);
+    expect(relations['mughal-court']['rajput-clans']).toBe(relations['rajput-clans']['mughal-court']);
+    expect(relations['nightmarket-syndicate']['nizams-court']).toBe(relations['nizams-court']['nightmarket-syndicate']);
   });
 
   it('should set initial lore-based relations', () => {
     const relations = createInitialFactionRelations();
-    expect(relations['iron-pact']['ashen-throne']).toBe('tense');
-    expect(relations['tidecallers']['verdant-commune']).toBe('friendly');
-    expect(relations['nightmarket-syndicate']['ashen-throne']).toBe('hostile');
-    expect(relations['verdant-commune']['iron-pact']).toBe('hostile');
-    expect(relations['nightmarket-syndicate']['dustwalkers']).toBe('friendly');
+    expect(relations['mughal-court']['rajput-clans']).toBe('tense');
+    expect(relations['brahmin-council']['nizams-court']).toBe('friendly');
+    expect(relations['nightmarket-syndicate']['mughal-court']).toBe('hostile');
+    expect(relations['brahmin-council']['east-india-company']).toBe('hostile');
+    expect(relations['nightmarket-syndicate']['nizams-court']).toBe('friendly');
   });
 });
 
 describe('shiftRelation', () => {
   it('should improve a relation by one step', () => {
     let relations = createInitialFactionRelations();
-    // iron-pact vs ashen-throne starts at 'tense'
-    relations = shiftRelation(relations, 'iron-pact', 'ashen-throne', 'improve');
-    expect(getRelation(relations, 'iron-pact', 'ashen-throne')).toBe('neutral');
+    // mughal-court vs rajput-clans starts at 'tense'
+    relations = shiftRelation(relations, 'mughal-court', 'rajput-clans', 'improve');
+    expect(getRelation(relations, 'mughal-court', 'rajput-clans')).toBe('neutral');
   });
 
   it('should worsen a relation by one step', () => {
     let relations = createInitialFactionRelations();
-    // tidecallers vs verdant-commune starts at 'friendly'
-    relations = shiftRelation(relations, 'tidecallers', 'verdant-commune', 'worsen');
-    expect(getRelation(relations, 'tidecallers', 'verdant-commune')).toBe('neutral');
+    // brahmin-council vs nizams-court starts at 'friendly'
+    relations = shiftRelation(relations, 'brahmin-council', 'nizams-court', 'worsen');
+    expect(getRelation(relations, 'brahmin-council', 'nizams-court')).toBe('neutral');
   });
 
   it('should not go below war', () => {
     let relations = createInitialFactionRelations();
     for (let i = 0; i < 20; i++) {
-      relations = shiftRelation(relations, 'iron-pact', 'tidecallers', 'worsen');
+      relations = shiftRelation(relations, 'mughal-court', 'east-india-company', 'worsen');
     }
-    expect(getRelation(relations, 'iron-pact', 'tidecallers')).toBe('war');
+    expect(getRelation(relations, 'mughal-court', 'east-india-company')).toBe('war');
   });
 
   it('should not go above allied', () => {
     let relations = createInitialFactionRelations();
     for (let i = 0; i < 20; i++) {
-      relations = shiftRelation(relations, 'iron-pact', 'tidecallers', 'improve');
+      relations = shiftRelation(relations, 'mughal-court', 'east-india-company', 'improve');
     }
-    expect(getRelation(relations, 'iron-pact', 'tidecallers')).toBe('allied');
+    expect(getRelation(relations, 'mughal-court', 'east-india-company')).toBe('allied');
   });
 
   it('should keep symmetry after shift', () => {
     let relations = createInitialFactionRelations();
-    relations = shiftRelation(relations, 'iron-pact', 'tidecallers', 'improve');
-    expect(getRelation(relations, 'iron-pact', 'tidecallers')).toBe(
-      getRelation(relations, 'tidecallers', 'iron-pact')
+    relations = shiftRelation(relations, 'mughal-court', 'east-india-company', 'improve');
+    expect(getRelation(relations, 'mughal-court', 'east-india-company')).toBe(
+      getRelation(relations, 'east-india-company', 'mughal-court')
     );
   });
 
   it('should not change self-relation', () => {
     let relations = createInitialFactionRelations();
-    relations = shiftRelation(relations, 'iron-pact', 'iron-pact', 'worsen');
-    expect(getRelation(relations, 'iron-pact', 'iron-pact')).toBe('allied');
+    relations = shiftRelation(relations, 'mughal-court', 'mughal-court', 'worsen');
+    expect(getRelation(relations, 'mughal-court', 'mughal-court')).toBe('allied');
   });
 });
 
@@ -100,17 +100,17 @@ describe('getWars', () => {
 
   it('should detect wars after worsening relations', () => {
     let relations = createInitialFactionRelations();
-    // nightmarket vs ashen-throne starts hostile, worsen to war
-    relations = shiftRelation(relations, 'nightmarket-syndicate', 'ashen-throne', 'worsen');
+    // nightmarket vs mughal-court starts hostile, worsen to war
+    relations = shiftRelation(relations, 'nightmarket-syndicate', 'mughal-court', 'worsen');
     const wars = getWars(relations);
     expect(wars.length).toBe(1);
     expect(wars[0]).toContain('nightmarket-syndicate');
-    expect(wars[0]).toContain('ashen-throne');
+    expect(wars[0]).toContain('mughal-court');
   });
 
   it('should not double-count wars', () => {
     let relations = createInitialFactionRelations();
-    relations = shiftRelation(relations, 'nightmarket-syndicate', 'ashen-throne', 'worsen');
+    relations = shiftRelation(relations, 'nightmarket-syndicate', 'mughal-court', 'worsen');
     const wars = getWars(relations);
     expect(wars.length).toBe(1);
   });
@@ -120,7 +120,6 @@ describe('getAlliances', () => {
   it('should not include self-alliances', () => {
     const relations = createInitialFactionRelations();
     const alliances = getAlliances(relations);
-    // Self-alliances (iron-pact with iron-pact) should NOT be included
     for (const [a, b] of alliances) {
       expect(a).not.toBe(b);
     }
@@ -128,11 +127,11 @@ describe('getAlliances', () => {
 
   it('should detect new alliances', () => {
     let relations = createInitialFactionRelations();
-    // Improve tidecallers-verdant-commune from friendly to allied
-    relations = shiftRelation(relations, 'tidecallers', 'verdant-commune', 'improve');
+    // Improve brahmin-council-nizams-court from friendly to allied
+    relations = shiftRelation(relations, 'brahmin-council', 'nizams-court', 'improve');
     const alliances = getAlliances(relations);
     const found = alliances.some(
-      ([a, b]) => (a === 'tidecallers' && b === 'verdant-commune') || (b === 'tidecallers' && a === 'verdant-commune')
+      ([a, b]) => (a === 'brahmin-council' && b === 'nizams-court') || (b === 'brahmin-council' && a === 'nizams-court')
     );
     expect(found).toBe(true);
   });
@@ -141,8 +140,7 @@ describe('getAlliances', () => {
 describe('getRelation', () => {
   it('should return neutral for undefined relations', () => {
     const relations = createInitialFactionRelations();
-    // getRelation has a fallback
-    expect(getRelation(relations, 'iron-pact', 'tidecallers')).toBeDefined();
+    expect(getRelation(relations, 'mughal-court', 'east-india-company')).toBeDefined();
   });
 });
 

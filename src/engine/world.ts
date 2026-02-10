@@ -28,7 +28,7 @@ export function createInitialRegions(): Record<RegionId, Region> {
  */
 export function createInitialCaravan(): Caravan {
   return {
-    currentRegion: 'obsidian-citadel', // Start at the capital
+    currentRegion: 'hyderabad', // Start at the Nizam's capital
     fuelCapacity: 150,
     cargoCapacity: 100,
     speed: 1,
