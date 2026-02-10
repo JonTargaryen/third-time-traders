@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+docker-compose.yml
+Dockerfile
+.dockerignore
+e2e
+playwright.config.ts
+playwright-report
+test-results
+coverage
+.env*.local
